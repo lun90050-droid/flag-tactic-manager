@@ -1330,7 +1330,7 @@ if st.button(L["button"], type="primary"):
                     st.error(f"❌ {L['error2']}\n错误类型：{type(e).__name__}\n错误详情：{e}")
                     st.stop()
 
-        raw = r1["choices"][0]["message"]["content"].strip()
+        raw = r1.choices[0].message.content.strip()
         lines = raw.split("\n")
         extracted, candidates = "", []
         found = False
