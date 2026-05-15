@@ -11,27 +11,26 @@ if "tactic_cache" not in st.session_state:
 # ===== 调试模式：跳过 API Key 检查 =====
 DEBUG_MODE = False  # 正式上线时改成 False
 
+from openai import OpenAI
+
 if DEBUG_MODE:
-    openai.api_key = "debug-mode-no-api-needed"
-    openai.api_base = "https://api.deepseek.com"  # DeepSeek 的 API 地址
+    client = OpenAI(api_key="debug-mode-no-api-needed", base_url="https://api.deepseek.com")
 else:
-    openai.api_key = os.getenv("DEEPSEEK_API_KEY", "")  # 改成 DEEPSEEK_API_KEY
-    openai.api_base = "https://api.deepseek.com"
-    if not openai.api_key:
+    api_key = os.getenv("DEEPSEEK_API_KEY", "")
+    if not api_key:
         st.sidebar.markdown("---")
         api_key_input = st.sidebar.text_input(
-            "🔑 DeepSeek API Key",  # 改成 DeepSeek
+            "🔑 DeepSeek API Key",
             type="password",
             placeholder="sk-...",
             help="输入后自动生效，不会保存"
         )
         if api_key_input:
-            openai.api_key = api_key_input
-            openai.api_base = "https://api.deepseek.com"
-    if not openai.api_key:
+            api_key = api_key_input
+    if not api_key:
         st.warning("⚠️ 请输入 DeepSeek API Key")
         st.stop()
-
+    client = OpenAI(api_key=api_key, base_url="https://api.deepseek.com")
 # ===== 结束 =====
 
 st.set_page_config(page_title="腰旗战术官 | FLAG TACTICS MANAGER", page_icon="🏈")
@@ -939,7 +938,7 @@ You MUST respond in English using EXACTLY this format. Do not use Chinese.
     max_retries2 = 2
     for attempt2 in range(max_retries2 + 1):
         try:
-            response2 = openai.ChatCompletion.create(
+            response2 = client.chat.completions.create(
                 model="deepseek-chat",
                 messages=[
                     {"role": "system", "content": "你是一名专业的腰旗橄榄球战术教练。你只能从提供的候选战术中选择，绝不编造战术。You must follow the output format exactly."},
@@ -948,7 +947,7 @@ You MUST respond in English using EXACTLY this format. Do not use Chinese.
                 temperature=0.6,
                 max_tokens=450
             )
-            return response2["choices"][0]["message"]["content"]
+            return response2.choices[0].message.content
         except openai.RateLimitError as e:
             if attempt2 < max_retries2:
                 time.sleep((attempt2 + 1) * 3)
@@ -1281,7 +1280,7 @@ if st.button(L["button"], type="primary"):
         max_retries = 2
         for attempt in range(max_retries + 1):
             try:
-                r1 = openai.ChatCompletion.create(
+                r1 = client.chat.completions.create(
                     model="deepseek-chat",
                     messages=[
                         {"role": "system", "content": "Strict format: weakness extraction then candidate tactics."},
@@ -1415,7 +1414,7 @@ You MUST respond in English using EXACTLY this format. Do not use Chinese.
         max_retries2 = 2
         for attempt2 in range(max_retries2 + 1):
             try:
-                response2 = openai.ChatCompletion.create(
+                response2 = client.chat.completions.create(
                     model="deepseek-chat",
                     messages=[
                         {"role": "system", "content": "你是一名专业的腰旗橄榄球战术教练。你只能从提供的候选战术中选择，绝不编造战术。You must follow the output format exactly."},
@@ -1466,7 +1465,7 @@ You MUST respond in English using EXACTLY this format. Do not use Chinese.
                     st.error(f"❌ {L['error3']}\n错误类型：{type(e).__name__}\n错误详情：{e}")
                     st.stop()
 
-        final_output = response2["choices"][0]["message"]["content"]
+        final_output = response2.choices[0].message.content
         st.success(L["done"])
         st.session_state.query_count += 1
         st.markdown("---")
