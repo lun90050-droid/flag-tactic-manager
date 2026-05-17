@@ -1245,11 +1245,20 @@ You MUST respond in English using EXACTLY this format. Do not use Chinese.
 
 🏆 **Best Tactic:** [tactic name from candidates]
 📝 **Why this tactic:** [2-3 sentences explaining the choice based on the game situation]
+👥 **Player Assignments:**
+- QB: [specific action after snap]
+- C: [specific action after snap]
+- Left WR: [specific route and yardage]
+- Right WR: [specific route and yardage]
+- Slot: [specific route and yardage]
+- RB: [specific route and yardage]
 ⚡ **Key execution points:** [what to pay attention to when running this play]
 📊 **Expected result:** [estimated yardage gain or success rate]
 
 🔄 **Backup tactic:** [alternative tactic name from candidates]
 🔀 **When to switch:** [under what circumstances to use the backup instead]
+
+Note: Player assignments must include specific actions for each player extracted from the tactic description.
 """
         else:
             output_format = """
@@ -1257,11 +1266,20 @@ You MUST respond in English using EXACTLY this format. Do not use Chinese.
 
 🏆 **最佳战术：** [从候选中选出的战术名]
 📝 **推荐理由：** [2-3句话解释为什么选这个战术]
+👥 **球员分工：**
+- QB：[开球后的具体动作，如三步后撤、阅读目标等]
+- C：[开球后的具体动作，如保护口袋、释放到坪区等]
+- 左侧WR：[具体跑动路线和码数]
+- 右侧WR：[具体跑动路线和码数]
+- Slot：[具体跑动路线和码数]
+- RB：[具体跑动路线和码数]
 ⚡ **执行要点：** [执行这个战术时需要注意的关键点]
 📊 **预估效果：** [预计推进码数或成功率]
 
 🔄 **备选战术：** [从候选中选出的备选战术名]
 🔀 **切换时机：** [什么情况下应该改用备选战术]
+
+注意：球员分工部分必须从战术描述中提取每位球员的具体动作，格式为"球员名：具体动作描述"。
 """
 
         prompt2 = f"""
