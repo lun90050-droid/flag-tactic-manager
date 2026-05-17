@@ -1098,7 +1098,8 @@ if st.button(L["button"], type="primary"):
     # ===== 第一阶段 =====
     
     # 先尝试本地语义检索
-        local_result = local_semantic_search(free_text, top_k=6)
+        # ===== 第一阶段 =====
+    local_result = local_semantic_search(free_text, top_k=6)
     if local_result is not None:
         local_indices, is_low_quality = local_result
     else:
