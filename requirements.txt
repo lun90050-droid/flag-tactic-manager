@@ -3,3 +3,5 @@ openai>=1.0.0
 matplotlib
 pillow
 numpy
+sentence-transformers
+scikit-learn

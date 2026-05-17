@@ -455,6 +455,55 @@ for t in tactics_full:
         all_tags.add(tags)
 all_tags_string = "，".join(sorted(all_tags))
 
+# ==================== 本地语义检索模块 ====================
+@st.cache_resource
+def load_sentence_model():
+    """加载多语言语义模型（只加载一次，全局缓存）"""
+    try:
+        from sentence_transformers import SentenceTransformer
+        return SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+    except ImportError:
+        return None
+
+@st.cache_resource
+def compute_tactic_embeddings():
+    """计算所有战术描述的向量嵌入（只计算一次）"""
+    model = load_sentence_model()
+    if model is None:
+        return None
+    # 使用战术的中文描述部分（换行符之前的内容）
+    descriptions = [t['desc'].split('\n')[0] for t in tactics_full]
+    return model.encode(descriptions)
+
+def local_semantic_search(query, top_k=6):
+    """
+    本地语义检索
+    输入：用户描述文本
+    输出：最相关战术的索引列表（如 [3, 15, 27, 8, 42, 10]）
+    """
+    model = load_sentence_model()
+    embeddings = compute_tactic_embeddings()
+    
+    if model is None or embeddings is None:
+        return None  # 模型未安装，返回 None
+    
+    from sklearn.metrics.pairwise import cosine_similarity
+    
+    # 将用户查询转为向量
+    query_embedding = model.encode([query])
+    
+    # 计算余弦相似度
+    similarities = cosine_similarity(query_embedding, embeddings)[0]
+    
+    # 获取相似度最高的 top_k 个索引
+    top_indices = similarities.argsort()[-top_k:][::-1]
+    
+    is_low_quality = False
+    if similarities[top_indices[0]] < 0.3:
+        is_low_quality = True
+    
+    return top_indices.tolist(), is_low_quality
+
 # ==================== 语言选择 ====================
 st.sidebar.header("🌐 Language / 语言")
 language = st.sidebar.radio("选择输出语言 / Select output language:", ["中文", "English"], horizontal=True)
@@ -510,6 +559,14 @@ else:
         "error3": "精选阶段失败:",
     }
 
+# ==================== 页面导航 ====================
+st.sidebar.markdown("---")
+page = st.sidebar.radio(
+    "📌 导航" if language == "中文" else "📌 Navigation",
+    ["🏈 战术分析", "📊 数据中心"] if language == "中文" else ["🏈 Tactics", "📊 Dashboard"],
+    key="page_nav"
+)
+
 # ==================== 用户输入 ====================
 st.sidebar.header(L["header"])
 st.sidebar.markdown("---")
@@ -518,6 +575,34 @@ if language == "English":
 else:
     st.sidebar.caption(f"📊 本次会话查询次数：{st.session_state.query_count}")
 
+# 语音输入选项
+use_voice = st.sidebar.checkbox(
+    "🎤 使用语音输入" if language == "中文" else "🎤 Use Voice Input",
+    key="use_voice"
+)
+
+if use_voice:
+    try:
+        from audio_recorder_streamlit import audio_recorder
+        audio_bytes = audio_recorder(
+            text="点击开始录音" if language == "中文" else "Click to record",
+            recording_color="#e74c3c",
+            neutral_color="#3498db",
+            key="voice_recorder"
+        )
+        if audio_bytes:
+            with open("temp_audio.wav", "wb") as f:
+                f.write(audio_bytes)
+            with open("temp_audio.wav", "rb") as audio_file:
+                transcript = client.audio.transcriptions.create(
+                    model="whisper-1",
+                    file=audio_file,
+                    language="zh" if language == "中文" else "en"
+                )
+            free_text = transcript.text
+            st.sidebar.success(f"识别结果: {free_text}")
+    except ImportError:
+        st.sidebar.warning("请先安装: pip install audio-recorder-streamlit")
 free_text = st.sidebar.text_area(L["header"], placeholder=L["ph"], height=200)
 
 need_quick = st.sidebar.radio(L["pref"], L["pref_opts"])
@@ -933,7 +1018,7 @@ You MUST respond in English using EXACTLY this format. Do not use Chinese.
 
 {output_format}
 
-重要：你只能从上述候选战术中选择，绝对不能自己编造战术。如果用户的描述和任何战术都不完全匹配，请选择最接近的那个并说明理由。
+重要：你必须从上述候选战术中选择一个作为最佳战术，再选一个作为备选战术。即使你觉得匹配度不高，也请根据战术特点选出最接近、最能应对当前比赛场景的一个。绝对不能自己编造战术名。如果匹配度确实很低，请在推荐理由中说明"该战术虽非完全匹配，但基于当前情况是最合理的选择。
 """
     max_retries2 = 2
     for attempt2 in range(max_retries2 + 1):
@@ -972,244 +1057,6 @@ You MUST respond in English using EXACTLY this format. Do not use Chinese.
                 time.sleep(2)
             else:
                 raise e
-# ==================== 战术动态可视化模块 ====================
-import re
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from matplotlib.patches import FancyBboxPatch
-import numpy as np
-from io import BytesIO
-from PIL import Image
-
-# ---------- 球场绘制参数 ----------
-FIELD_LENGTH = 100   # 码
-FIELD_WIDTH = 53.3   # 码
-# 绘图坐标：x 代表从本方端区到对方端区，y 代表宽度
-# 为了方便，我们以场地左下角为(0,0)，右上角为(FIELD_LENGTH, FIELD_WIDTH)
-
-def draw_field(ax):
-    """绘制简化橄榄球场"""
-    ax.set_xlim(-5, FIELD_LENGTH + 5)
-    ax.set_ylim(-5, FIELD_WIDTH + 5)
-    ax.set_facecolor('#2E7D32')  # 绿茵
-    # 码线
-    for yd in range(0, 101, 10):
-        ax.axvline(x=yd, color='white', linewidth=1, alpha=0.3)
-        ax.text(yd, -2, str(yd), ha='center', color='white', fontsize=6)
-    # 边线
-    ax.plot([0, FIELD_LENGTH], [0, 0], color='white', linewidth=2)
-    ax.plot([0, FIELD_LENGTH], [FIELD_WIDTH, FIELD_WIDTH], color='white', linewidth=2)
-    # 端区
-    ax.axvline(x=0, color='white', linewidth=3)
-    ax.axvline(x=FIELD_LENGTH, color='white', linewidth=3)
-    ax.axis('off')
-
-# ---------- 路线形状定义（相对坐标）----------
-# 每条路线给出从起点开始的路径点序列（码），起点位置由球员类型决定
-ROUTE_SHAPES = {
-    "Fly": [(0,0), (20,0), (40,0)],                      # 垂直冲刺
-    "Hitch": [(0,0), (6,0), (6,2)],                       # 前冲6码回身
-    "Slant": [(0,0), (3,2), (6,4), (9,6)],               # 45度内切
-    "Out": [(0,0), (5,0), (7,-3), (10,-5)],              # 外直角
-    "In": [(0,0), (5,0), (7,3), (10,5)],                 # 内直角
-    "Post": [(0,0), (8,0), (12,3), (16,6)],              # 内切45度
-    "Corner": [(0,0), (8,0), (12,-3), (16,-6)],          # 外切45度
-    "Post-Corner": [(0,0), (6,2), (10,0), (14,-4)],      # 先内后外
-    "Corner-Post": [(0,0), (6,-2), (10,0), (14,4)],      # 先外后内
-    "Stop and Go": [(0,0), (6,0), (6,1), (20,0)],        # 急停再启动
-    "Chair": [(0,0), (4,0), (4,-4), (20,-4)],            # 横向再垂直
-    "Option": [(0,0), (5,2), (8,2)],                      # 简化为斜插
-    "Curl": [(0,0), (8,0), (8,-3), (10,-3)],             # 弧线回身
-    "Comeback": [(0,0), (12,0), (12,3), (15,2)],         # 深回退
-    "Whip": [(0,0), (5,2), (8,0), (10,-3)],              # 鞭打
-    "Dig": [(0,0), (8,0), (12,4), (12,6)],               # 深凿内切
-    "Fade": [(0,0), (20,-4), (30,-8)],                    # 边线高球
-    "Flat": [(0,0), (3,-2), (5,-4)],                      # 坪区
-    "Wheel": [(0,0), (3,-4), (20,-4)],                    # 车轮
-    "Drag": [(0,0), (2,0), (10,0), (20,2)],               # 横穿（简化）
-    "Snag": [(0,0), (3,0), (3,2)],                        # 短斜
-    "Stick": [(0,0), (4,0), (4,-2)],                      # 棍棒
-    "Juke": [(0,0), (2,1), (2,-1), (8,0)],               # 晃动
-    "Seam": [(0,0), (15,0), (20,0)],                      # 接缝垂直
-    "Speed Out": [(0,0), (12,0), (14,-4), (16,-6)],      # 快速外切
-}
-
-# 常用简写映射（战术描述中可能出现的变体）
-ROUTE_ALIASES = {
-    "飞驰路线": "Fly", "回身路线": "Hitch", "斜插路线": "Slant",
-    "外侧直角路线": "Out", "内侧直角路线": "In", "柱状路线": "Post",
-    "底角路线": "Corner", "柱角假动作路线": "Post-Corner",
-    "角柱假动作路线": "Corner-Post", "急停再启动路线": "Stop and Go",
-    "座椅路线": "Chair", "选项路线": "Option", "卷曲路线": "Curl",
-    "回退长路线": "Comeback", "鞭打路线": "Whip", "深凿路线": "Dig",
-    "高弧深远路线": "Fade", "坪区路线": "Flat", "车轮路线": "Wheel",
-    "拖拽横穿路线": "Drag", "斯纳格路线": "Snag", "棍棒路线": "Stick",
-    "晃动路线": "Juke", "接缝路线": "Seam", "速度外切": "Speed Out",
-    # 英文别名
-    "Fly Route": "Fly", "Hitch Route": "Hitch", "Slant Route": "Slant",
-    "Out Route": "Out", "In Route": "In", "Post Route": "Post",
-    "Corner Route": "Corner", "Post-Corner Route": "Post-Corner",
-    "Corner-Post Route": "Corner-Post", "Stop and Go Route": "Stop and Go",
-    "Chair Route": "Chair", "Option Route": "Option", "Curl Route": "Curl",
-    "Comeback Route": "Comeback", "Whip Route": "Whip", "Dig Route": "Dig",
-    "Fade Route": "Fade", "Flat Route": "Flat", "Wheel Route": "Wheel",
-    "Drag Route": "Drag", "Snag Concept": "Snag", "Stick Concept": "Stick",
-    "Juke": "Juke", "Seam Route": "Seam", "Speed Out": "Speed Out",
-}
-
-# 球员初始站位（x, y）码，x为纵向位置（距启球线），y为横向位置（码线宽度）
-# 我们假设进攻方向为x正方向，启球线在x=20码处
-LOS = 20  # line of scrimmage
-PLAYER_POSITIONS = {
-    "QB": (15, FIELD_WIDTH/2),
-    "C": (20, FIELD_WIDTH/2),
-    "RB": (16, FIELD_WIDTH/2 + 5),
-    "左侧WR": (20, 5),
-    "右侧WR": (20, FIELD_WIDTH - 5),
-    "Slot": (20, FIELD_WIDTH/2 + 2),
-    "槽位": (20, FIELD_WIDTH/2 + 2),
-    "槽位Slot": (20, FIELD_WIDTH/2 + 2),
-    "远端Slot": (20, FIELD_WIDTH - 2),
-    "左侧槽位": (20, 8),
-    "右侧槽位": (20, FIELD_WIDTH - 8),
-    "近端锋": (20, FIELD_WIDTH/2 + 2),
-    "左外接": (20, 5),
-    "右外接": (20, FIELD_WIDTH - 5),
-    "外侧WR": (20, 5),   # 默认左侧
-    "最外侧WR": (20, 5),
-}
-
-def parse_tactic_description(desc):
-    """
-    从战术中文描述中提取球员->路线映射。
-    返回列表：[(球员中文名, 路线英文名, 球员位置坐标), ...]
-    """
-    assignments = []
-    # 模式1：左侧WR / 右侧WR / Slot / RB 等 + 跑 + 路线名
-    # 匹配 "左侧WR跑Fly路线"、"右侧WR跑Post路线"、"Slot跑Slant路线"
-    pattern1 = r'(左侧WR|右侧WR|槽位Slot|Slot|RB|左侧槽位|右侧槽位|左外接|右外接|外侧WR|最外侧WR|C|QB|远端Slot|近端锋)\s*跑\s*(\S+路线)'
-    matches1 = re.findall(pattern1, desc)
-    for player, route_name in matches1:
-        route_en = ROUTE_ALIASES.get(route_name, None)
-        if not route_en:
-            # 尝试去掉“路线”二字再匹配
-            route_en = ROUTE_ALIASES.get(route_name.replace("路线", ""), None)
-        if route_en:
-            pos = PLAYER_POSITIONS.get(player, (20, FIELD_WIDTH/2 + 2))
-            assignments.append((player, route_en, pos))
-    
-    # 模式2：QB...后撤，不画路线；C开球后释放跑...路线
-    pattern2 = r'C开球后.*?释放.*?跑\s*(\S+路线)'
-    match_c = re.search(pattern2, desc)
-    if match_c:
-        route_name = match_c.group(1)
-        route_en = ROUTE_ALIASES.get(route_name, ROUTE_ALIASES.get(route_name.replace("路线",""), None))
-        if route_en:
-            assignments.append(("C", route_en, PLAYER_POSITIONS["C"]))
-    
-    # 模式3：英文描述中的类似模式
-    # 可扩展，目前先覆盖中文为主
-    return assignments
-
-def generate_tactic_gif(tactic_name):
-    """生成战术动画GIF并返回BytesIO对象"""
-    tactic = next((t for t in tactics_full if t['name'] == tactic_name), None)
-    if not tactic:
-        return None
-    desc = tactic['desc']
-    assignments = parse_tactic_description(desc)
-    if not assignments:
-        return None
-
-    # 创建画布
-    fig, ax = plt.subplots(figsize=(8, 5))
-    draw_field(ax)
-    ax.set_title(tactic_name, color='white', fontsize=12)
-
-    # 初始化球员点
-    player_dots = {}
-    for player, route, (x0, y0) in assignments:
-        dot, = ax.plot([], [], 'o', color='white', markersize=8, zorder=5)
-        # 路线线段
-        line, = ax.plot([], [], color='yellow', linewidth=2, zorder=4)
-        player_dots[player] = {'dot': dot, 'line': line, 'route': route, 'start': (x0, y0)}
-    
-    # 获取每条路线的路径点序列（基于起点）
-    route_points_cache = {}
-    for player, data in player_dots.items():
-        shape = ROUTE_SHAPES.get(data['route'], [(0,0)])
-        start_x, start_y = data['start']
-        pts = [(start_x + dx, start_y + dy) for dx, dy in shape]
-        route_points_cache[player] = pts
-
-    total_frames = 50  # 动画帧数
-    def animate(frame):
-        progress = frame / total_frames
-        for player, data in player_dots.items():
-            pts = route_points_cache[player]
-            if len(pts) < 2:
-                continue
-            # 计算当前已走完的路径比例对应的点
-            total_len = 0
-            segments = []
-            for i in range(len(pts)-1):
-                seg_len = np.hypot(pts[i+1][0]-pts[i][0], pts[i+1][1]-pts[i][1])
-                segments.append(seg_len)
-                total_len += seg_len
-            target_len = progress * total_len
-            cum_len = 0
-            cut_point = None
-            for i, seg_len in enumerate(segments):
-                if cum_len + seg_len >= target_len:
-                    frac = (target_len - cum_len) / seg_len
-                    cut_point = (pts[i][0] + frac*(pts[i+1][0]-pts[i][0]),
-                                 pts[i][1] + frac*(pts[i+1][1]-pts[i][1]))
-                    break
-                cum_len += seg_len
-            if cut_point is None:
-                cut_point = pts[-1]
-            # 更新圆点位置
-            data['dot'].set_data([cut_point[0]], [cut_point[1]])
-            # 更新已画路线
-            line_x = [pts[0][0]]
-            line_y = [pts[0][1]]
-            cum = 0
-            for i, seg_len in enumerate(segments):
-                if cum + seg_len >= target_len:
-                    frac = (target_len - cum) / seg_len
-                    line_x.append(pts[i][0] + frac*(pts[i+1][0]-pts[i][0]))
-                    line_y.append(pts[i][1] + frac*(pts[i+1][1]-pts[i][1]))
-                    break
-                cum += seg_len
-                line_x.append(pts[i+1][0])
-                line_y.append(pts[i+1][1])
-            data['line'].set_data(line_x, line_y)
-        return []
-
-    ani = animation.FuncAnimation(fig, animate, frames=total_frames, interval=50, blit=False)
-    
-    # 保存为GIF到BytesIO
-    gif_buffer = BytesIO()
-    ani.save(gif_buffer, writer='pillow', fps=10)
-    plt.close(fig)
-    gif_buffer.seek(0)
-    return gif_buffer
-
-# 将所有战术名列表供下拉菜单使用
-tactic_names_for_viz = [t['name'] for t in tactics_full]
-with st.expander("🎬 战术动态演示" if language == "中文" else "🎬 Dynamic Tactic Demo", expanded=False):
-    selected_tactic = st.selectbox(
-        "选择战术查看动画" if language == "中文" else "Select a tactic to view animation",
-        tactic_names_for_viz,
-        key="tactic_viz"
-    )
-    if st.button("▶️ 播放动画" if language == "中文" else "▶️ Play Animation", key="play_viz"):
-        with st.spinner("生成动画中..." if language == "中文" else "Generating animation..."):
-            gif_buffer = generate_tactic_gif(selected_tactic)
-            if gif_buffer:
-                st.image(gif_buffer, caption=selected_tactic, use_container_width=True)
-            else:
-                st.warning("该战术暂无可视化数据，请选择其他战术。" if language == "中文" else "No visualization available for this tactic.")
 
 # ==================== AI 两阶段筛选 ====================
 st.subheader("🧠动态战术筛选" if language == "中文" else "🧠Dynamic Tactical Analysis")
@@ -1249,8 +1096,29 @@ if st.button(L["button"], type="primary"):
         user_preference = "Note: User prefers aggressive, deep-strike tactics." if language == "English" else "请注意：用户偏好激进、能快速推进的深远战术。"
     
     # ===== 第一阶段 =====
-    with st.spinner(L["spinner1"]):
-        prompt1 = f"""
+    
+    # 先尝试本地语义检索
+        local_result = local_semantic_search(free_text, top_k=6)
+    if local_result is not None:
+        local_indices, is_low_quality = local_result
+    else:
+        local_indices = None
+        is_low_quality = False
+    
+    if local_indices is not None and len(local_indices) > 0:
+        # 本地检索成功，直接使用结果
+        local_candidates = [tactics_full[i]['name'] for i in local_indices]
+        candidates = local_candidates
+        extracted = "本地语义检索"
+        if is_low_quality:
+            st.warning(f"⚠️ 未找到高度匹配的战术，以下为最接近的候选")
+        else:
+            st.success(f"🎯 本地语义检索完成（离线模式，无需消耗 API）")
+        st.info(L["cand_found"].format(len(candidates)) + f": {', '.join(candidates[:6])}")
+    else:
+        # 本地检索失败，使用 GPT
+        with st.spinner(L["spinner1"]):
+            prompt1 = f"""
 你是一名腰旗橄榄球战术分析师。
 任务：
 1. 从【可用弱点标签库】中找出用户描述里的对方弱点（最多3个）。
@@ -1276,84 +1144,84 @@ if st.button(L["button"], type="primary"):
 战术名2
 ...
 """
-        r1 = None
-        max_retries = 2
-        for attempt in range(max_retries + 1):
-            try:
-                r1 = client.chat.completions.create(
-                    model="deepseek-chat",
-                    messages=[
-                        {"role": "system", "content": "Strict format: weakness extraction then candidate tactics."},
-                        {"role": "user", "content": prompt1}
-                    ],
-                    temperature=0.3, max_tokens=300
-                )
-                break
-            except openai.RateLimitError as e:
-                if attempt < max_retries:
-                    wait_time = (attempt + 1) * 3
-                    st.warning(f"⏳ API 请求频率过高，{wait_time}秒后重试 ({attempt+1}/{max_retries})...")
-                    time.sleep(wait_time)
-                else:
-                    st.error(f"❌ API 额度用尽或请求过于频繁。请稍后再试。\n错误详情：{e}")
+            r1 = None
+            max_retries = 2
+            for attempt in range(max_retries + 1):
+                try:
+                    r1 = client.chat.completions.create(
+                        model="deepseek-chat",
+                        messages=[
+                            {"role": "system", "content": "Strict format: weakness extraction then candidate tactics."},
+                            {"role": "user", "content": prompt1}
+                        ],
+                        temperature=0.3, max_tokens=300
+                    )
+                    break
+                except openai.RateLimitError as e:
+                    if attempt < max_retries:
+                        wait_time = (attempt + 1) * 3
+                        st.warning(f"⏳ API 请求频率过高，{wait_time}秒后重试 ({attempt+1}/{max_retries})...")
+                        time.sleep(wait_time)
+                    else:
+                        st.error(f"❌ API 额度用尽或请求过于频繁。请稍后再试。\n错误详情：{e}")
+                        st.stop()
+                except openai.AuthenticationError as e:
+                    st.error(f"🔑 API Key 无效或已过期。\n错误详情：{e}")
                     st.stop()
-            
-            except openai.AuthenticationError as e:
-                st.error(f"🔑 API Key 无效或已过期。\n错误详情：{e}")
-                st.stop()
-            
-            except openai.APIConnectionError as e:
-                if attempt < max_retries:
-                    st.warning(f"🌐 网络连接失败，正在重试 ({attempt+1}/{max_retries})...")
-                    time.sleep(2)
-                else:
-                    st.error(f"🌐 无法连接到 OpenAI 服务器。\n错误详情：{e}")
+                except openai.APIConnectionError as e:
+                    if attempt < max_retries:
+                        st.warning(f"🌐 网络连接失败，正在重试 ({attempt+1}/{max_retries})...")
+                        time.sleep(2)
+                    else:
+                        st.error(f"🌐 无法连接到 OpenAI 服务器。\n错误详情：{e}")
+                        st.stop()
+                except openai.APITimeoutError as e:
+                    if attempt < max_retries:
+                        st.warning(f"⏰ 请求超时，正在重试 ({attempt+1}/{max_retries})...")
+                        time.sleep(2)
+                    else:
+                        st.error(f"⏰ 请求超时。\n错误详情：{e}")
+                        st.stop()
+                except openai.BadRequestError as e:
+                    st.error(f"📝 请求格式有误。\n错误详情：{e}")
                     st.stop()
-            
-            except openai.APITimeoutError as e:
-                if attempt < max_retries:
-                    st.warning(f"⏰ 请求超时，正在重试 ({attempt+1}/{max_retries})...")
-                    time.sleep(2)
-                else:
-                    st.error(f"⏰ 请求超时。\n错误详情：{e}")
-                    st.stop()
-            
-            except openai.BadRequestError as e:
-                st.error(f"📝 请求格式有误。\n错误详情：{e}")
-                st.stop()
-            
-            except Exception as e:
-                if attempt < max_retries:
-                    st.warning(f"⚠️ 未知错误，正在重试 ({attempt+1}/{max_retries})...")
-                    time.sleep(2)
-                else:
-                    st.error(f"❌ {L['error2']}\n错误类型：{type(e).__name__}\n错误详情：{e}")
-                    st.stop()
+                except Exception as e:
+                    if attempt < max_retries:
+                        st.warning(f"⚠️ 未知错误，正在重试 ({attempt+1}/{max_retries})...")
+                        time.sleep(2)
+                    else:
+                        st.error(f"❌ {L['error2']}\n错误类型：{type(e).__name__}\n错误详情：{e}")
+                        st.stop()
 
-        raw = r1.choices[0].message.content.strip()
-        lines = raw.split("\n")
-        extracted, candidates = "", []
-        found = False
-        for line in lines:
-            line = line.strip()
-            if line.startswith("弱点提取：") or line.startswith("弱点提取:"):
-                extracted = line.split("：")[-1].split(":")[-1].strip()
-                found = True
-            elif found and line and "候选战术" not in line:
-                candidates.append(line.strip())
-        if not candidates:
-            candidates = [l.strip() for l in lines if l.strip() and "弱点" not in l]
+            raw = r1.choices[0].message.content.strip()
+            lines = raw.split("\n")
+            extracted, candidates = "", []
+            found = False
+            for line in lines:
+                line = line.strip()
+                if line.startswith("弱点提取：") or line.startswith("弱点提取:"):
+                    extracted = line.split("：")[-1].split(":")[-1].strip()
+                    found = True
+                elif found and line and "候选战术" not in line:
+                    candidates.append(line.strip())
+            if not candidates:
+                candidates = [l.strip() for l in lines if l.strip() and "弱点" not in l]
+            
+            if not candidates:
+                candidates = [tactics_full[i]['name'] for i in range(min(6, len(tactics_full)))]
+                st.warning("AI 未识别到明确弱点，已自动选取通用候选战术进行推荐")
 
-        if not candidates:
-            st.error(L["error1"])
-            st.stop()
 
-        if extracted:
+    if extracted:
+        if extracted != "本地语义检索":
             st.success(f"{L['weak_found']}**{extracted}**")
-        else:
-            st.info(L["weak_none"])
+    else:
+        st.info(L["weak_none"])
+    
+    if extracted == "本地语义检索":
+        pass  # 已经显示过消息
+    else:
         st.info(L["cand_found"].format(len(candidates)) + f": {', '.join(candidates[:6])}")
-
     # ===== 第二阶段：精选 =====
     with st.spinner(L["spinner2"]):
         try:
@@ -1408,7 +1276,7 @@ You MUST respond in English using EXACTLY this format. Do not use Chinese.
 
 {output_format}
 
-重要：你只能从上述候选战术中选择，绝对不能自己编造战术。如果用户的描述和任何战术都不完全匹配，请选择最接近的那个并说明理由。
+重要：你必须从上述候选战术中选出一个最佳战术和一个备选战术。即使你觉得匹配度不高，也必须选出最接近当前比赛场景的战术。如果匹配度确实很低，请在推荐理由中诚实说明"该战术并非完全匹配，但基于当前情况是最合理的选择"。绝对不能返回"没有匹配战术"或类似内容。
 """
         response2 = None
         max_retries2 = 2
@@ -1467,6 +1335,24 @@ You MUST respond in English using EXACTLY this format. Do not use Chinese.
 
         final_output = response2.choices[0].message.content
         st.success(L["done"])
+
+                # ===== 记录推荐数据 =====
+        if "recommendation_log" not in st.session_state:
+            st.session_state.recommendation_log = []
+        
+        best_tactic = ""
+        if "最佳战术" in final_output:
+            best_tactic = final_output.split("最佳战术：")[1].split("\n")[0].strip()
+        elif "Best Tactic" in final_output:
+            best_tactic = final_output.split("Best Tactic:")[1].split("\n")[0].strip()
+        
+        st.session_state.recommendation_log.append({
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "best_tactic": best_tactic,
+            "weakness_tags": extracted,
+            "preference": need_quick,
+            "language": language
+        })
         st.session_state.query_count += 1
         st.markdown("---")
         st.markdown(final_output)
@@ -1480,3 +1366,39 @@ You MUST respond in English using EXACTLY this format. Do not use Chinese.
                 file_name=f"tactic_recommendation.txt",
                 mime="text/plain"
             )
+# ==================== 数据中心页面 ====================
+if page == ("📊 数据中心" if language == "中文" else "📊 Dashboard"):
+    st.title("📊 数据中心" if language == "中文" else "📊 Analytics Dashboard")
+    
+    if "recommendation_log" not in st.session_state or len(st.session_state.recommendation_log) == 0:
+        st.info("暂无数据，请先进行战术分析。" if language == "中文" else "No data yet. Please analyze some tactics first.")
+    else:
+        import pandas as pd
+        df = pd.DataFrame(st.session_state.recommendation_log)
+        
+        # 最常推荐战术 Top 10
+        st.subheader("🏆 最常推荐战术" if language == "中文" else "🏆 Most Recommended Tactics")
+        top_tactics = df['best_tactic'].value_counts().head(10)
+        if len(top_tactics) > 0:
+            st.bar_chart(top_tactics)
+        
+        # 偏好分布
+        st.subheader("⚖️ 用户偏好分布" if language == "中文" else "⚖️ Preference Distribution")
+        pref_counts = df['preference'].value_counts()
+        if len(pref_counts) > 0:
+            st.bar_chart(pref_counts)
+        
+        # 最近推荐记录
+        st.subheader("📋 最近推荐记录" if language == "中文" else "📋 Recent Recommendations")
+        st.dataframe(df[['timestamp', 'best_tactic', 'weakness_tags', 'preference']].tail(10))
+        
+        # 下载数据
+        csv = df.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            "📥 下载推荐历史" if language == "中文" else "📥 Download History",
+            csv,
+            "tactic_history.csv",
+            "text/csv"
+        )
+    
+    st.stop()
