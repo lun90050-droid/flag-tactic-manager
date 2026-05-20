@@ -419,12 +419,18 @@ all_tags = list(set(tag for t in tactics_full for tag in t["标签"]))
 all_tags_string = "，".join(all_tags)
 
 
-def get_full_desc(names):
+def get_full_desc(names, lang='中文'):
     result = ""
     for name in names:
         for t in tactics_full:
             if t["name"] == name:
-                result += f"\n【{t['name']}】\n{t['desc']}\n标签: {', '.join(t['标签'])}\n"
+                if lang == "English":
+                    # 只输出英文描述
+                    en_desc = t['desc'].split('\n')[1] if '\n' in t['desc'] else t['desc']
+                    en_tags = t['标签'][0] if t['标签'] else ""
+                    result += f"\n【{name}】\n{en_desc}\nTags: {en_tags}\n"
+                else:
+                    result += f"\n【{t['name']}】\n{t['desc']}\n标签: {', '.join(t['标签'])}\n"
                 break
     return result
 # ==================== 构建索引 ====================
@@ -461,7 +467,9 @@ def load_sentence_model():
     """加载多语言语义模型（只加载一次，全局缓存）"""
     try:
         from sentence_transformers import SentenceTransformer
-        return SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+        with st.spinner("🔄 正在加载语义模型（首次加载约需30秒，后续秒开）..." if language == "中文" else "🔄 Loading semantic model (first time ~30s, then instant)..."):
+            model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+        return model
     except ImportError:
         return None
 
@@ -471,31 +479,27 @@ def compute_tactic_embeddings():
     model = load_sentence_model()
     if model is None:
         return None
-    # 使用战术的中文描述部分（换行符之前的内容）
     descriptions = [t['desc'].split('\n')[0] for t in tactics_full]
-    return model.encode(descriptions)
+    with st.spinner("🔍 正在分析54条战术特征（首次约需10秒）..." if language == "中文" else "🔍 Analyzing 54 tactics (first time ~10s)..."):
+        embeddings = model.encode(descriptions)
+    return embeddings
 
 def local_semantic_search(query, top_k=6):
     """
     本地语义检索
     输入：用户描述文本
-    输出：最相关战术的索引列表（如 [3, 15, 27, 8, 42, 10]）
+    输出：最相关战术的索引列表，以及是否为低质量匹配
     """
     model = load_sentence_model()
     embeddings = compute_tactic_embeddings()
     
     if model is None or embeddings is None:
-        return None  # 模型未安装，返回 None
+        return None
     
     from sklearn.metrics.pairwise import cosine_similarity
     
-    # 将用户查询转为向量
     query_embedding = model.encode([query])
-    
-    # 计算余弦相似度
     similarities = cosine_similarity(query_embedding, embeddings)[0]
-    
-    # 获取相似度最高的 top_k 个索引
     top_indices = similarities.argsort()[-top_k:][::-1]
     
     is_low_quality = False
@@ -967,6 +971,9 @@ def cached_phase2(candidate_names: tuple, user_text: str, extracted_weakness: st
     candidate_names 需要转为 tuple（可哈希）
     """
     desc = get_full_desc(list(candidate_names))
+    if language == "English":
+        # 只保留英文部分
+        desc = desc.split('\n')[1] if '\n' in desc else desc
     weak_ctx = f"\n\nAI extracted weakness tags: {extracted_weakness}" if extracted_weakness else ""
 
     user_preference = ""
@@ -1099,7 +1106,8 @@ if st.button(L["button"], type="primary"):
     
     # 先尝试本地语义检索
         # ===== 第一阶段 =====
-    local_result = None
+    with st.spinner("🔎 正在进行本地语义匹配..." if language == "中文" else "🔎 Performing local semantic matching..."):
+        local_result = None
     if local_result is not None:
         local_indices, is_low_quality = local_result
     else:
@@ -1137,6 +1145,9 @@ if st.button(L["button"], type="primary"):
 {user_preference if user_preference else ""}
 
 {L["lang_instr"]}
+
+重要提示：如果用户使用英文描述，请用英文输出弱点标签和候选战术名（只输出英文部分，不要包含中文翻译）。
+
 
 格式：
 弱点提取：标签1，标签2，...
@@ -1236,7 +1247,7 @@ if st.button(L["button"], type="primary"):
         except Exception as e:
             st.error(f"❌ {L['error3']}\n{e}")
             st.stop()
-        desc = get_full_desc(candidates)
+        desc = get_full_desc(list(candidates), lang=language)
         weak_ctx = f"\n\nAI extracted weakness tags: {extracted}" if extracted else ""
 
         if language == "English":
