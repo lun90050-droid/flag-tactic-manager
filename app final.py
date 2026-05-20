@@ -37,374 +37,374 @@ st.set_page_config(page_title="腰旗战术官 | FLAG TACTICS MANAGER", page_ico
 # ... 后续代码不变
 if "query_count" not in st.session_state:
     st.session_state.query_count = 0
-# ==================== 54条战术完整库 ====================
+# ==================== 70条战术完整库 ====================
 tactics_full = [
     {
         "name": "飞驰路线 (Fly Route)",
         "desc": "C开球后原地保护，QB接球后三步后撤观察，左侧WR全速垂直冲刺30码以上直接攻击对方安全卫身后纵深，右侧WR跑中距离回身路线牵制同侧角卫，Slot从槽位释放后跑浅区横穿清理坪区防守者。\n(C protects in place after snap. QB takes a 3-step drop and reads the field. Left WR sprints vertically 30+ yards to attack the space behind the safety. Right WR runs an intermediate hitch to occupy the corner. Slot releases from the slot and runs a shallow cross to clear the flat defender.)",
-        "标签": ["速度慢", "防守前压(Blitz)"]
+        "标签": ["对方角卫速度慢", "对方安全卫站位过深", "深远打击", "一档大码数", "落后追分"]
     },
     {
         "name": "回身路线 (Hitch Route)",
         "desc": "C开球后向前推挡一步后滞留中路，QB三步后撤快速阅读，左侧WR冲刺8码后急停转身回跑2码面向QB，右侧WR跑3码斜插带走同侧防守者，Slot和RB分别向两侧坪区释放提供快速出球选择。\n(C takes one step forward to block then holds in the middle. QB drops back 3 steps and reads quickly. Left WR sprints 8 yards, stops abruptly, turns back 2 yards to face QB. Right WR runs a 3-yard slant to pull the defender away. Slot and RB release to opposite flats to provide quick outlet options.)",
-        "标签": ["急停防弱", "跟防惯性大(Poor Stop Ability)"]
+        "标签": ["对方角卫跟防惯性大", "对方防短传反应慢", "短码转换", "三档短码", "安全高成功率"]
     },
     {
         "name": "斜插路线 (Slant Route)",
         "desc": "C开球后向左前方推挡协助保护口袋左侧，QB接球后两步后撤快速出球，槽位Slot向外侧虚晃一步后立刻以45度角斜插切入场地中央纵深，左侧WR沿边线垂直冲深吸引角卫远离中路，右侧WR跑5码Out路线将同侧防守者带向边线，RB留在后场做最后一道阻挡。\n(C blocks to the left front to protect the pocket's left side. QB takes a 2-step drop and releases quickly. Slot fakes outside then immediately cuts inside at a 45-degree angle into the middle of the field. Left WR runs a vertical route along the sideline to pull the corner away from the middle. Right WR runs a 5-yard Out to take his defender to the boundary. RB stays in the backfield for final protection.)",
-        "标签": ["外站位", "内侧变向慢(Slow Inside Reaction)"]
+        "标签": ["对方线卫反应慢", "对方中路防守空虚", "快速出球", "中路渗透", "三档中短码"]
     },
     {
         "name": "外侧直角路线 (Out Route)",
         "desc": "C开球后向右推挡保护口袋右侧，QB三步后撤将球快速传向边线，右侧WR直线冲刺7码后以90度直角突然切向边线方向，左侧WR跑Post路线牵制安全卫留在中路深处，Slot跑3码斜插分散线卫注意力，RB释放到右坪区提供安全阀。\n(C blocks right to protect the right side of the pocket. QB takes a 3-step drop and passes quickly to the boundary. Right WR sprints 7 yards straight then makes a sharp 90-degree cut toward the sideline. Left WR runs a Post to hold the safety deep in the middle. Slot runs a 3-yard slant to distract the linebacker. RB releases to the right flat as a safety valve.)",
-        "标签": ["重心偏内", "外侧变向弱(Poor Outside Reaction)"]
+        "标签": ["对方角卫重心偏内", "对方边路防守薄弱", "边路进攻", "控制时间", "安全高成功率"]
     },
     {
         "name": "内侧直角路线 (In Route)",
         "desc": "C开球后居中保护，QB接球后快速阅读线卫位置，槽位Slot直线冲刺5码后以90度直角切入场地中央抢中线空间，左侧WR沿边线冲刺8码跑Curl路线牵制同侧角卫无法内收协防，右侧WR跑Corner路线清空边路纵深的潜在协防者，RB从后场释放到左坪区。\n(C blocks in the center. QB receives the snap and reads the linebacker position quickly. Slot sprints 5 yards then cuts 90 degrees into the middle of the field to claim central space. Left WR runs 8 yards up the sideline on a Curl to prevent his corner from helping inside. Right WR runs a Corner route to clear deep coverage on that side. RB releases from the backfield to the left flat.)",
-        "标签": ["面向外侧", "转身内切慢(Slow Cut Inside)"]
+        "标签": ["对方线卫覆盖范围小", "对方区域防守有缝隙", "中路渗透", "快速出球", "中距离推进"]
     },
     {
         "name": "柱状路线 (Post Route)",
         "desc": "C开球后保护中路防止突击，QB五步后撤等待深远路线展开，左侧WR加速冲刺12码后以45度角切入场地中央深处指向球门立柱方向，右侧WR同样跑Post路线从另一侧向中央汇集形成双柱夹击安全卫的态势，Slot跑短斜插占据线卫眼前制造中短距离威胁，RB留在后场阻挡任何漏进来的突击者。\n(C blocks the middle to prevent a blitz. QB takes a 5-step drop to wait for deep routes to develop. Left WR accelerates 12 yards then cuts at a 45-degree angle toward the center goalpost. Right WR runs the same Post route from the other side, creating a dual-post attack that squeezes the safety. Slot runs a short slant to occupy the linebacker and create a mid-range threat. RB stays in the backfield to block any leaking rushers.)",
-        "标签": ["中路纵深空", "安全卫外扩(Poor Safety Coverage)"]
+        "标签": ["对方安全卫站位过深", "对方中路纵深空虚", "深远打击", "双安全卫体系", "大码数推进"]
     },
     {
         "name": "底角路线 (Corner Route)",
         "desc": "C开球后向右推挡协助强侧保护，QB五步后撤将球导向边线底角，右侧WR全速冲刺10码后以45度角切向边线和底线交汇的底角区域，左侧WR跑Post路线将安全卫吸引在中路深处使其无法回补边角，Slot跑5码Hitch路线牵制槽角卫不敢后退过深，RB释放到右坪区预防QB受压时快速出球。\n(C blocks right to protect the strong side. QB takes a 5-step drop and guides the ball toward the boundary corner of the end zone. Right WR sprints 10 yards then cuts at a 45-degree angle toward the corner where the sideline meets the end line. Left WR runs a Post to pull the safety deep in the middle, preventing him from helping on the corner. Slot runs a 5-yard Hitch to freeze the slot corner from dropping too deep. RB releases to the right flat for a quick outlet if QB is pressured.)",
-        "标签": ["边路纵深空", "角卫压上(Poor Corner Coverage)"]
+        "标签": ["对方角卫压上过深", "对方边路纵深空虚", "红区进攻", "边路进攻", "达阵威胁"]
     },
     {
         "name": "柱角假动作路线 (Post-Corner Route)",
         "desc": "C开球后掩护中路面并观察有无突击，QB七步深撤等待双变向完成，槽位Slot先向内侧做一个Post假动作诱使安全卫向前压上补位，紧接着猛然二次变向切向外侧底角全速冲刺，左侧WR跑Corner路线从另一侧牵制对位角卫，右侧WR跑Dig切入中路埋伏在中区防线的缝隙中，RB在Slot启动二次变向时快速释放到同侧坪区。\n(C blocks the middle and watches for blitzers. QB takes a 7-step deep drop to let the double move develop. Slot first fakes a Post route inside, baiting the safety to step forward and cover, then immediately makes a second cut toward the outside corner at full speed. Left WR runs a Corner route to occupy his corner from the other side. Right WR runs a Dig into the middle, hiding in the seams of the zone. RB releases to the flat on the same side when Slot makes his second cut.)",
-        "标签": ["预判被骗", "二次变向失位  (Poor Double Move Execution)"]
+        "标签": ["对方安全卫预判易骗", "对方二次变向跟防差", "高风险高回报", "单安全卫体系", "达阵威胁"]
     },
     {
         "name": "角柱假动作路线 (Corner-Post Route)",
         "desc": "C开球后保护口袋注意两侧边缘冲击，QB五步后撤后耐心等待路线发展，右侧WR先向外做一个Corner假动作诱使角卫全力保护边线，待防守者身体重心外移后突然二次变向以45度角切回球场中央深区，左侧WR跑Fly路线将安全卫钉在另一侧纵深使其无法横移补位，Slot跑In路线从另一侧切入中央形成中路多层接应点，RB留在后场保护。\n(C blocks the pocket, watching for edge pressure on both sides. QB takes a 5-step drop and waits for the route to develop. Right WR first fakes a Corner route outside, baiting the corner to fully commit to protecting the sideline. Once the defender shifts his weight outside, WR makes a second cut at a 45-degree angle back toward the deep middle. Left WR runs a Fly to pin the safety on the other side, preventing him from sliding over. Slot runs an In route from the other side to create multiple layers in the middle. RB stays in the backfield for protection.)",
-        "标签": ["外侧保护过度", "内线空虚  (Poor Edge Protection)"]
+        "标签": ["对方边路保护过度", "对方中路协防空虚", "高风险高回报", "中路纵深打击", "大码数推进"]
     },
     {
         "name": "急停再启动路线 (Stop and Go Route)",
         "desc": "C开球后推挡保护并注意是否有线卫延迟突击，QB五步后撤后先假动作骗防守者以为要短传，左侧WR全速冲刺约9码后急停做回身状，诱使对位角卫也急停准备扑前断球，待防守者被冻结后左侧WR不等其反应立即二次全速冲刺纵深，右侧WR跑Hitch路线提供中距离安全阀门，Slot跑浅横穿清理中路短区，RB在右侧WR回身时向其方向释放。\n(C blocks and watches for delayed linebacker blitz. QB drops back 5 steps and uses a pump fake to sell a short pass. Left WR sprints about 9 yards, stops abruptly, and turns back as if receiving a hitch, baiting the corner to stop and jump the route. Once the defender is frozen, Left WR immediately accelerates again at full speed deep. Right WR runs a Hitch to provide a mid-range safety valve. Slot runs a shallow cross to clear the short middle. RB releases toward Right WR when he turns back.)",
-        "标签": ["启动加速慢", "惯性冻结   (Poor Acceleration)"]
+        "标签": ["对方角卫惯性冻结", "对方启动加速慢", "高风险高回报", "落后追分", "一档大码数"]
     },
     {
         "name": "座椅路线 (Chair Route)",
         "desc": "C开球后向左推挡建立口袋边缘保护，QB五步后撤观察左侧发展，左侧WR向前跑4码后横向平移切向边线，紧接着沿边线方向垂直冲刺底线，对位角卫在横向平移时被迫转髋跟防，二次垂直变向时身体平衡被完全打乱，右侧WR跑Dig路线深入中场吸引安全卫，Slot跑Slant切入中央占线卫视野，RB在左侧WR横向移动时向左侧坪区释放。\n(C blocks left to set the edge of the pocket. QB takes a 5-step drop and watches the left side develop. Left WR runs forward 4 yards, then laterally toward the sideline, followed by a vertical sprint down the boundary. The corner is forced to flip his hips during the lateral movement and loses balance during the second vertical cut. Right WR runs a Dig deep in the middle to draw the safety. Slot runs a Slant into the center to occupy the linebacker. RB releases to the left flat when Left WR makes his lateral move.)",
-        "标签": ["横向平衡差", "连续变向弱(Poor Lateral Balance and Cuts)"]
+        "标签": ["对方角卫横向平衡差", "对方连续变向防守弱", "边路深远打击", "单挑优势", "大码数推进"]
     },
     {
         "name": "选项路线 (Option Route)",
         "desc": "C开球后居中保护并观察防守阵型，QB三步后撤快速阅读槽位的对位防守者站位，槽位Slot先做一个斜插状假动作诱惑防守者反应，若防守者明显防内则立刻改为沿外侧平行线跑向边线方向，若防守者防外则保持斜插切入中央，左侧WR跑Corner路线牵制同侧角卫，右侧WR跑Fly路线清空另一侧纵深安全卫，RB从后场直接释放到Slot同侧的坪区做第二选项。\n(C blocks in the center and reads the defensive formation. QB takes a 3-step drop and quickly reads the slot defender's positioning. Slot fakes a Slant to bait a reaction. If the defender protects inside, Slot immediately changes to a flat route along the sideline. If the defender protects outside, Slot continues the Slant inside. Left WR runs a Corner to occupy that side's corner. Right WR runs a Fly to clear the safety on the other side. RB releases directly to the flat on the same side as Slot as a second option.)",
-        "标签": ["阅读犹豫", "选项防判断差(Poor Option Reading and Execution)"]
+        "标签": ["对方防守阅读犹豫", "人盯人防守", "灵活应变", "中短码推进", "单挑优势"]
     },
     {
         "name": "卷曲路线 (Curl Route)",
         "desc": "C开球后向强侧推挡建立稳固口袋，QB五步后撤将球准确投向边线区域，强侧WR冲刺约10码后在边线处划出一条小圆弧回身向外寻球，利用防守者因忌惮深球而后退过深造成的空间差接球，弱侧WR跑Post路线将安全卫钉在中路深处，Slot跑In路线从中路插入占据任何试图外补的线卫，RB释放到强侧坪区做应急出球点。\n(C blocks to the strong side to establish a solid pocket. QB takes a 5-step drop and delivers the ball accurately to the boundary. The strong-side WR sprints about 10 yards, then runs a small arc back toward the sideline to look for the ball, exploiting the space created by the defender who is bailing too deep in fear of a deep pass. Weak-side WR runs a Post to pin the safety deep in the middle. Slot runs an In route into the middle to occupy any linebacker trying to help outside. RB releases to the strong-side flat as an emergency outlet.)",
-        "标签": ["后退过深", "包夹回追慢 (Poor Deep Coverage and Pursuit)"]
+        "标签": ["对方角卫后退过深", "对方防深球意识过度", "边路中距离", "安全高成功率", "控制时间"]
     },
     {
         "name": "回退长路线 (Comeback Route)",
         "desc": "C开球后全力保护口袋并注意延迟突击，QB七步深撤等待深远路线充分展开，左侧WR全力冲刺15码以上深区迫使对位角卫转身全速追跑，随后WR用一道圆弧轨迹折返向启球线方向回退约4码，防守者在全速后退中无法同步急停再前移导致完全脱离覆盖，右侧WR跑Fly将安全卫拖离此侧，Slot跑浅区Hitch牵制槽角卫，RB释放到左侧坪区。\n(C fully commits to pocket protection and watches for delayed blitz. QB takes a 7-step deep drop to let the deep route fully develop. Left WR sprints 15+ yards deep to force the corner to turn and run at full speed, then uses an arc trajectory to come back about 4 yards toward the line of scrimmage. The defender, running at full speed backward, cannot stop and come forward simultaneously, losing coverage completely. Right WR runs a Fly to drag the safety away from this side. Slot runs a shallow Hitch to occupy the slot corner. RB releases to the left flat.)",
-        "标签": ["转身急停差", "深区回追控制弱(Poor Deep Coverage and Pursuit)"]
+        "标签": ["对方角卫转身急停差", "对方深区回追控制弱", "边路大码数", "单挑优势", "安全高成功率"]
     },
     {
         "name": "鞭打路线 (Whip Route)",
         "desc": "C开球后向右推挡注意外侧冲击，QB三步后撤观察区域防守的交接瞬间，槽位Slot先向内侧做一个虚晃斜插动作做出要接中路短传的样子，诱使对位防区和中路防区的防守者交接出现一瞬间迟疑，随即Slot猛然切向外侧跑平路线如同鞭梢甩出，左侧WR跑Corner路线截住边线纵深，右侧WR跑5码In路线占据中央，RB释放到槽位同侧坪区。\n(C blocks right, watching for outside pressure. QB takes a 3-step drop and reads the zone handoff moment. Slot first fakes a Slant inside, appearing to receive a short pass in the middle, creating a momentary hesitation in the zone handoff between defenders. Slot then snaps sharply to the outside on a flat route like a whip cracking. Left WR runs a Corner to control the deep boundary. Right WR runs a 5-yard In route to occupy the middle. RB releases to the flat on the same side as Slot.)",
-        "标签": ["区域交接模糊", "犹豫缝隙( Poor Zone Handoff and Hesitation)"]
+        "标签": ["对方区域交接模糊", "对方防守沟通有缝隙", "快速出球", "中短距离推进", "边路进攻"]
     },
     {
         "name": "深凿路线 (Dig Route)",
         "desc": "C开球后居中保护并帮助双A缝防突击，QB五步后撤等待中央路线展开，槽位Slot垂直冲刺12码后以接近90度的直角猛然切入场地中央心脏地带，利用两个防守区域横向补位节奏不同步的瞬间在夹层中接球，左侧WR跑Corner路线清空左侧纵深使安全卫向左偏移，右侧WR跑Hitch路线在短距离提供快出选择，RB在Slot切入中央时同步向反方向坪区释放。\n(C blocks in the middle and helps both A-gaps against blitz. QB takes a 5-step drop and waits for the middle route to develop. Slot sprints vertically 12 yards, then cuts sharply at nearly a 90-degree angle into the heart of the field, catching the ball in the seam between two zones whose lateral coverage is out of sync. Left WR runs a Corner to clear deep on the left, pulling the safety that way. Right WR runs a Hitch to provide a quick short option. RB releases to the flat on the opposite side when Slot cuts inside.)",
-        "标签": ["横移补位慢", "区域夹层(Poor Zone Coverage in the Middle)"]
+        "标签": ["对方横移补位慢", "区域防守", "中路中距离", "安全高成功率", "控制时间"]
     },
     {
         "name": "高弧深远路线 (Fade Route)",
         "desc": "C开球后全力保护口袋为深球争取时间，QB五步后撤后将球高弧度抛向端区角落，左侧大外接WR直接冲向边线底角端区，利用身高弹跳优势在1对1高空球争夺中获得优势，右侧WR跑Post路线将安全卫拉向中路深处避免其回防补位，Slot跑Slant切入中低区域清空线卫视线，RB留在后场阻挡任何冲破口袋的防守者。\n(C fully protects the pocket to buy time for the deep throw. QB takes a 5-step drop and arcs the ball high toward the corner of the end zone. Left outside WR sprints directly to the boundary corner of the end zone, using height and jumping advantage to win the 50-50 ball. Right WR runs a Post to pull the safety deep into the middle, preventing him from rotating back. Slot runs a Slant into the intermediate area to clear the linebacker's vision. RB stays in the backfield to block any defender who breaks through.)",
-        "标签": ["身高弹跳弱", "争顶劣势(Poor Jumping Ability)"]
+        "标签": ["对方角卫身高弹跳差", "对方争顶劣势", "红区进攻", "达阵威胁", "单挑优势"]
     },
     {
         "name": "坪区路线 (Flat Route)",
         "desc": "C开球后向前推挡后立即释放转身跑向启球线附近的边路坪区成为第六个接球选项，QB两步后撤快速将球传到坪区，左侧WR跑Fly路线全速冲深将同侧角卫和安全卫注意力全部拖入纵深，右侧WR跑Corner路线清空另一侧边路纵深，Slot跑In路线挤入中央占据线卫视野，整个防守被深远路线拉空后的坪区完全无人看守。\n(C blocks forward briefly then immediately releases and turns toward the boundary flat near the line of scrimmage, becoming the sixth receiving option. QB takes a 2-step drop and quickly passes to the flat. Left WR runs a Fly at full speed to drag the corner and safety deep on that side. Right WR runs a Corner to clear the other sideline deep. Slot runs an In route into the middle to occupy the linebacker's vision. The entire defense is stretched by deep routes, leaving the flat completely unguarded.)",
-        "标签": ["坪区真空", "深区牵制过深(Poor Deep Coverage)"]
+        "标签": ["对方坪区防守真空", "对方被深远路线牵制", "快速出球", "短码推进", "安全高成功率"]
     },
     {
         "name": "车轮路线 (Wheel Route)",
         "desc": "RB从后场启动先向边线方向横向跑动做出要接坪区短传的样子，诱使对位线卫也横向移动准备防守短传，随即RB突然转为垂直冲刺全速沿边线冲向纵深，线卫在横向移动中被迫转身追跑由于绝对速度和转身能力不足被迅速甩开，C开球后保护后释放到反方向坪区，左侧WR跑Post路线牵制安全卫，右侧WR跑Curl路线在边线短距离埋伏，Slot跑In路线占据中路。\n(RB starts from the backfield by running laterally toward the sideline as if receiving a flat pass, baiting the linebacker to move laterally to defend the short throw. RB then suddenly turns vertically and sprints at full speed along the sideline deep. The linebacker, already in lateral motion, is forced to turn and chase but is quickly outrun due to lack of speed and turn ability. C blocks then releases to the opposite flat. Left WR runs a Post to occupy the safety. Right WR runs a Curl to set up on the boundary. Slot runs an In route into the middle.)",
-        "标签": ["转身追跑慢", "坪区防深弱(Poor Flat Coverage)"]
+        "标签": ["对方线卫转身追跑慢", "对方坪区防深弱", "跑卫接球", "边路深远打击", "出其不意"]
     },
     {
         "name": "拖拽横穿路线 (Drag Route)",
         "desc": "C开球后居中保护两步后释放到右侧坪区，QB三步后撤寻找横穿目标，槽位Slot从左侧启动以中等速度贴启球线横穿全场跑向右侧，利用沿途左侧WR跑Fly清空左侧、右侧WR跑In路线占据中央、RB在中间位置做假阻挡等队友的路线和身体作为流动掩护，盯人防守者在追逐中被反复阻延导致Slot在无人紧贴的情况下接球转身获得推进空间。\n(C blocks in the middle for two counts then releases to the right flat. QB takes a 3-step drop and looks for the crossing target. Slot launches from the left side at moderate speed, running a Drag route just above the line of scrimmage across the entire field toward the right. Using teammates as moving picks—Left WR clears with a Fly, Right WR occupies the middle with an In, RB fakes a block in the middle—man defenders are repeatedly obstructed during pursuit. Slot catches the ball with no one tight on him, turns, and gains yards after catch.)",
-        "标签": ["盯人挂挡", "掩护摆脱盲区(Poor Blocking and Coverage)"]
+        "标签": ["对方盯人被掩护挂住", "人盯人防守", "短传后推进", "中路横穿", "安全高成功率"]
     },
     {
         "name": "单后场阵型战术1 (Single Back Play 1)",
         "desc": "I字阵型站位，C开球后向前推挡后即释放走Corner路线沿边线攻击中深区域，QB五步后撤阅读防守层次分布，左侧WR跑Fly路线全速冲深将整条左侧防线拖入纵深，右侧WR跑Slant路线从右外侧45度切向中央短区域吸引线卫注意，RB从单后场位置先做假阻挡动作延误突击者随后走坪区路线到右侧提供安全阀。防守方在同时面对深、中、短三层路线时内部分工混乱导致必然漏掉一人。\n(I-formation alignment. C blocks forward then releases on a Corner route along the sideline to attack the intermediate-deep area. QB takes a 5-step drop and reads the defensive layers. Left WR runs a Fly at full speed, dragging the entire left defense deep. Right WR runs a Slant from the right outside at a 45-degree angle into the short middle to draw linebacker attention. RB from the single-back position first fakes a block to delay blitzers, then releases to the right flat as a safety valve. The defense, facing deep, intermediate, and short routes simultaneously, gets confused in coverage assignments and inevitably leaves someone open.)",
-        "标签": ["多层路线混乱", "分工不清( Poor Coverage Assignments)"]
+        "标签": ["对方防守分工不清", "多层路线攻击", "I字阵型", "一档中码", "全面覆盖"]
     },
     {
         "name": "单后场阵型战术2 (Single Back Play 2)",
         "desc": "I字阵型站位，C开球后全力保护口袋，QB五步深撤让路线充分发展，左右两侧WR同时跑Post路线从两翼向中央深处汇集形成双柱夹击态势迫使安全卫必须在两人间做选择，槽位WR从内线释放后跑Corner路线攻击被安全卫放弃的边路纵深空间，RB在开球后做假阻挡留在后场保护，待安全卫做出选择后QB将球传向安全卫无法覆盖的一侧。\n(I-formation alignment. C fully protects the pocket. QB takes a 5-step deep drop to let routes fully develop. Both outside WRs run Post routes from opposite wings converging toward the deep middle, creating a dual-post squeeze that forces the safety to choose between them. The slot WR releases from the inside and runs a Corner route to attack the boundary deep area that the safety has abandoned. RB fakes a block after the snap and stays for protection. Once the safety commits, QB throws to the side the safety cannot cover.)",
-        "标签": ["安全卫协防弱", "边路单挑(Poor Boundary Play)"]
+        "标签": ["对方安全卫协防弱", "双安全卫体系", "I字阵型", "深远打击", "大码数推进"]
     },
     {
         "name": "单后场交叉路线 (Single-Back Criss-Cross)",
         "desc": "I字阵型站位，C开球后保护后释放跑Slant路线从中间偏左斜切中央，左侧WR跑反向Slant与C的路线形成交叉态势，两人的路线在启球线5码处交错通过使防守者被迫相互绕行被挂住，右侧WR跑In路线切入中央深处占据安全卫前方空间，RB从单后场走Out路线到右侧边线短区，远端Slot跑浅横穿到左侧坪区，区域防守在横向上被多个交叉路线撕扯导致两个防区之间出现真空。\n(I-formation alignment. C blocks then releases on a Slant from the middle-left into the center. Left WR runs a reverse Slant, creating a criss-cross with C at 5 yards past the line of scrimmage. Defenders are forced to navigate around each other and get rubbed off. Right WR runs an In route deep into the middle, occupying the space in front of the safety. RB from the single-back runs an Out route to the right flat. The far Slot runs a shallow cross to the left flat. Zone coverage is torn horizontally by multiple crossing routes, creating a vacuum between two zones.)",
-        "标签": ["区域横移慢", "交叉空档    (Poor Zone Lateral Movement and Crossing Routes)"]
+        "标签": ["对方区域横移慢", "交叉路线制造空档", "I字阵型", "中距离推进", "区域防守"]
     },
     {
         "name": "分散阵型战术1 (Spread Play 1)",
         "desc": "四人全分散站位，C开球后向后保护口袋，QB三步后撤快速判断防守弱者所在位置，左侧WR跑Fly路线全力冲深压迫同侧角卫和安全卫后退保护身后，右侧WR跑Option路线根据防守者站位自主选择内侧斜插或外侧平跑使对位防守者陷入犹豫，槽位Slot从中路位置跑斜插补足内线短传空间，RB从后场释放到右侧坪区提供快速出球点。防守在全场被拉开的宽度下横向延展不足导致弱侧补防永远慢半拍。\n(Four-wide fully spread formation. C blocks backward to protect the pocket. QB takes a 3-step drop and quickly identifies the defensive weakness. Left WR runs a Fly at full speed, pressing the corner and safety to retreat and protect deep. Right WR runs an Option route, choosing inside slant or outside flat depending on the defender's positioning, making the defender hesitate. Slot from the middle runs a Slant to fill the short inside space. RB releases from the backfield to the right flat for a quick outlet. The defense, stretched across the full width of the field, lacks horizontal range and weak-side help always arrives a step late.)",
-        "标签": ["横向延展差", "弱侧补防慢(Poor Weak Side Help)"]
+        "标签": ["对方横向延展不足", "弱侧补防慢", "分散阵型", "寻找单挑", "快速出球"]
     },
     {
         "name": "分散阵型战术2 (Spread Play 2)",
         "desc": "四人全分散站位，C开球后向右推挡保护强侧，QB五步后撤后将球分配向防守衔接最薄弱的层级，左侧WR跑Corner路线攻击边线纵深，槽位Slot跑In路线从槽位切入中央中距离区域，右侧WR跑Out路线切向边线短区域，RB留在后场做阻挡后延迟释放到左坪区。三层路线从前到后全面覆盖防守区域，而防守方的区域划分过于死板导致两个防区衔接处完全无人盯防。\n(Four-wide fully spread formation. C blocks right to protect the strong side. QB takes a 5-step drop and distributes the ball to the weakest layer of the defense. Left WR runs a Corner to attack the boundary deep. Slot runs an In route from the slot into the intermediate middle. Right WR runs an Out route toward the boundary short area. RB stays in the backfield to block, then releases late to the left flat. Three layers of routes—deep, intermediate, short—fully cover the defense. The defense's rigid zone assignments leave the seams between two zones completely uncovered.)",
-        "标签": ["区域衔接差", "分层漏洞(Poor Zone Seam Coverage)"]
+        "标签": ["对方区域衔接差", "分层路线攻击", "分散阵型", "全面覆盖", "中距离推进"]
     },
     {
         "name": "分散阵型战术3 (Spread Play 3)",
         "desc": "四人全分散站位，C开球后居中保护，QB快速两步后撤在2秒内出球，左侧WR和槽位Slot在左侧短区域做Out和Slant交叉跑动，两人在5码范围内交错通过故意制造防守者的互相推挤和挂挡，右侧WR跑3码Hitch提供第二选项，RB从后场释放到左侧坪区预备接球。人盯人防守者跟防交叉路线时因不会绕过掩护而互相碰撞导致至少一人完全空出。\n(Four-wide fully spread formation. C blocks in the middle. QB takes a quick 2-step drop and releases within 2 seconds. Left WR and Slot on the left side run Out and Slant routes that cross within a 5-yard area, deliberately creating a rub/pick situation where defenders collide with each other. Right WR runs a 3-yard Hitch to provide a second option. RB releases from the backfield to the left flat as a ready receiver. Man defenders following the crossing routes don't know how to navigate the natural pick and collide, leaving at least one receiver completely free.)",
-        "标签": ["盯人互挂", "短距交叉漏(Poor Short-Distance Crossing Coverage)"]
+        "标签": ["对方盯人被掩护挂住", "人盯人防守", "分散阵型", "短距离交叉", "快速出球"]
     },
     {
         "name": "右侧三叉戟阵型 (Trips Right)",
         "desc": "三名接球手全部紧密排列在右侧，C开球后向左推挡迷惑防守后释放到空旷的左侧短区，QB两步后撤快速判断防守重心偏移情况，右侧最外侧WR跑Fly路线全速冲深钉住角卫和安全卫，中间WR跑Corner路线占据右侧中深度边线区域，内侧槽位跑Out路线切向右侧边线短区，左侧仅剩的一名WR跑Slant切入中央。防守将绝大部分人员调往强侧后左侧已完全处于人数劣势。\n(Three receivers all tightly aligned on the right. C blocks left to deceive the defense, then releases to the wide-open left short area. QB takes a 2-step drop and quickly reads the defensive shift. The rightmost WR runs a Fly at full speed, pinning the corner and safety deep. The middle WR runs a Corner to occupy the intermediate-deep boundary on the right. The inside slot runs an Out toward the right flat. The lone left WR runs a Slant into the middle. After the defense shifts most defenders to the strong side, the left side is completely outnumbered.)",
-        "标签": ["弱侧弃守", "兵力偏侧(Poor Weak Side Coverage)"]
+        "标签": ["对方弱侧弃守", "防守重心偏移", "三叉戟阵型", "弱侧偷袭", "快速出球"]
     },
     {
         "name": "三叉戟阵型战术2 (Trips Formation Play 2)",
         "desc": "三人紧密排列在右侧，C开球后保护口袋并观察防守分配，QB五步后撤等待路线展开，最外侧WR跑深远Fly路线拉走角卫纵深，第二WR跑Corner路线占据中层边线，内侧槽位跑5码Out路线占据短边线，左侧单独WR在防守将全部注意力放在右侧三叉戟时悄然跑Post路线切入中央深处。防守在强侧因拥挤而导致多人互相阻挡失去对位，弱侧安全卫孤立面对有准备的外接手。\n(Three receivers tightly aligned on the right. C blocks to protect the pocket and reads the defensive distribution. QB takes a 5-step drop and lets routes develop. The outermost WR runs a deep Fly to pull the corner deep. The second WR runs a Corner to occupy the intermediate boundary. The inside slot runs a 5-yard Out to claim the short boundary. The lone left WR, while all defensive attention is on the Trips side, quietly runs a Post deep into the middle. The defense gets congested and loses individual matchups on the strong side. The weak-side safety is left isolated against a prepared receiver.)",
-        "标签": ["拥挤失位", "反侧单防弱(Poor Weak Side Coverage)"]
+        "标签": ["对方强侧拥挤失位", "弱侧单防劣势", "三叉戟阵型", "弱侧深远打击", "大码数推进"]
     },
     {
         "name": "三叉戟层叠阵型2 (Trips Stack Play 2)",
         "desc": "三名右侧接球手以前后层叠方式紧密站位而非平行排列，C开球后向后保护口袋，QB三步后撤观察防守者被层叠迷惑后的反应，层叠的三人在开球瞬间几乎同时释放但分别跑向不同方向——最前者跑Fly直冲纵深，第二人跑Corner走边线中层，第三人跑In切入中央，由于开球前的视线遮蔽防守者无法预判谁跑什么路线，区域交接因混乱而完全延误。\n(Three right-side receivers align in a stacked (front-to-back) formation rather than parallel. C blocks backward to protect the pocket. QB takes a 3-step drop and reads the defense's confused reaction to the stack. The three stacked receivers release almost simultaneously but run different directions—the front one runs a Fly straight deep, the second runs a Corner to the intermediate boundary, the third runs an In into the middle. Because the stack hides the receivers pre-snap, defenders cannot predict who will run which route. Zone handoffs are chaotic and completely delayed.)",
-        "标签": ["视线遮挡", "交接延误(Poor Stack Coverage)"]
+        "标签": ["对方视线被遮挡", "区域交接延误", "层叠阵型", "迷惑防守", "中距离推进"]
     },
     {
         "name": "三叉戟阵型战术3 (Trips Play 3)",
         "desc": "三人紧密排列在右侧，C开球后推挡保护并注意延迟释放，QB五步后撤用眼神瞄向短距离路线吸引防守前压，前两名接球手跑Hitch和Out短路线故意将防守者吸引向启球线方向，当防守者因拥堵而向前靠拢时，隐藏在层叠后方的第三条路线球员全速冲刺Fly过顶，防守因拥堵出现换人错误且完全忽略了被遮挡的深远威胁。\n(Three receivers tightly aligned on the right. C blocks to protect and watches for delayed release. QB takes a 5-step drop and uses his eyes to look toward the short routes, baiting the defense to step forward. The first two receivers run Hitch and Out short routes, deliberately pulling defenders toward the line of scrimmage. When defenders crowd forward, the third receiver hidden behind the stack sprints on a Fly over the top. The defense, congested, makes assignment-switching errors and completely ignores the obscured deep threat.)",
-        "标签": ["过顶忽略", "区域换人错(Poor Deep Coverage and Zone Switching)"]
+        "标签": ["对方防短传前压", "区域换人出错", "三叉戟阵型", "过顶打击", "达阵威胁"]
     },
     {
         "name": "双子阵型战术2 (Twins Formation Play 2)",
         "desc": "左侧并列两名接球手，右侧两名接球手，C开球后保护口袋并注意两侧压力，QB五步后撤阅读防守深度分布，左侧外接跑Fly垂直冲深逼迫安全卫后撤保护身后，内侧槽位同时跑Out路线切向左侧边线短区的空位，右侧WR跑Post路线将安全卫牵制在中路深处使其无法外扩协防，右侧槽位跑Corner路线占据右侧边线纵深，防守因过分忌惮深远路线而整体后撤导致浅区坪区完全交出。\n(Twins formation: two receivers on the left, two on the right. C blocks to protect the pocket and watches both edges. QB takes a 5-step drop and reads the depth of the defense. Left outside WR runs a Fly vertically, forcing the safety to retreat and protect deep. The inside slot simultaneously runs an Out to the left flat. Right WR runs a Post to hold the safety deep in the middle so he can't help outside. Right slot runs a Corner to claim the right boundary deep. The defense, overly afraid of deep routes, retreats as a unit and completely surrenders the shallow flats.)",
-        "标签": ["过度后退", "坪区真空(Poor Flat Coverage)"]
+        "标签": ["对方过度忌惮深球", "坪区防守真空", "双子阵型", "短传推进", "安全高成功率"]
     },
     {
         "name": "双子阵型战术3 (Twins Formation Play 3)",
         "desc": "左右各列双接球手，C开球后居中保护，QB七步深撤等待复杂路线组合完全展开，左侧WR跑Post-Corner双变向路线上演假内切转底角的把戏，右侧WR跑Corner-Post双变向先外后内，左侧槽位跑Dig切入中央深处，右侧槽位跑Comeback长回退路线在边线埋伏，四个人的路线完全独立而又同时攻击防线的不同层级和角度，防守者个人脑力和沟通无法同时处理如此复杂的威胁必然顾此失彼。\n(Twins on each side: two receivers left, two right. C blocks in the middle. QB takes a 7-step deep drop and waits for the complex route combinations to fully develop. Left WR runs a Post-Corner double move—faking inside then breaking to the corner. Right WR runs a Corner-Post double move—first outside then back inside. Left slot runs a Dig deep into the middle. Right slot runs a Comeback route lurking on the boundary. All four routes are independent yet simultaneously attack different levels and angles of the defense. The defender's individual brainpower and communication cannot process this many threats at once, inevitably losing track of someone.)",
-        "标签": ["复杂路线脑力弱", "顾此失彼(Poor Route Combinations and Coverage)"]
+        "标签": ["对方防守沟通不足", "复杂路线组合", "双子阵型", "全面攻击", "高风险高回报"]
     },
     {
         "name": "双子层叠阵型 (Twins Stack Play)",
         "desc": "左侧两名接球手采用前后层叠站位而非平行站位，C开球后保护口袋并延迟释放到右侧坪区，QB三步后撤观察防守对层叠的反应，层叠的双子在开球后分别向内侧和外侧纵深快速散开，由于层叠的初始站位使防守者对两人的出发方向和距离判断失误，在散开的第一步防守者就失去了贴防位置，防守对散开瞬间的判断根本来不及反应。\n(Two receivers on the left align in a stacked front-to-back formation rather than parallel. C blocks to protect the pocket and releases late to the right flat. QB takes a 3-step drop and reads the defense's reaction to the stack. After the snap, the stacked twins quickly scatter—one inside, one outside deep. Because the stack's starting alignment tricks defenders on release direction and distance, defenders lose tight coverage on the very first step. The defense can't react in time to the scatter moment.)",
-        "标签": ["初始散开判断差", "贴防丢失(Poor Tight Coverage)"]
+        "标签": ["对方初始判断差", "贴防丢失", "层叠阵型", "快速散开", "中距离推进"]
     },
     {
         "name": "双子层叠阵型2 (Twins Stack Play 2)",
         "desc": "左侧双子层叠站位，C开球后向前推挡后释放走斜插路线到中央，QB两步后撤快速出球利用防守尚未建立对位的时间差，层叠两接球手在开球瞬间做内外夹角跑动——一人向外切平路一人向内切斜插，两人的路线在3码处交叉通过，面对区域防守利用快发抢先手在防线未稳时出球，面对人盯人则利用相互挡住交叉的防守者制造拉扯空间，无论何种防守体系应变都过于僵硬难以立即调整。\n(Left side twins stacked. C blocks forward then releases on a Slant into the middle. QB takes a 2-step drop and gets the ball out quickly, exploiting the defense before matchups are set. At the snap, the stacked twins run an inside-outside angle combo—one cuts outside on a flat, the other cuts inside on a Slant. Their routes cross at 3 yards. Against zone, the quick release catches the defense before the coverage is settled. Against man, the crossing routes create a rub that picks defenders. Either defensive system is too rigid to adjust immediately.)",
-        "标签": ["应变僵硬", "补位失灵(Poor Help Coverage)"]
+        "标签": ["对方应变僵硬", "补位失灵", "层叠阵型", "快速出球", "短距离交叉"]
     },
     {
         "name": "集结阵型战术1 (Bunch Play 1)",
         "desc": "三名接球手在启球线一侧紧密集结形成拥挤的一堆，C开球后推挡后释放向另一侧短区，QB三步后撤观察防守者被集结混乱后的对位分配，集结的三人开球后同时启动——中锋位负责推挡后走Corner撕开后退，前锋位向弱侧释放，外侧外接手走Fly垂直纵深清空后方，人盯人防守在紧密集结的发球瞬间根本无法迅速辨识并跟住自己的对位人导致被集体淹没。\n(Three receivers form a tight bunch on one side of the line of scrimmage. C blocks then releases toward the other side short area. QB takes a 3-step drop and reads the defense's matchup confusion after the bunch. The three bunched receivers launch simultaneously—the middle runs a Corner to tear back deep, the front releases to the weak side, the outside runs a Fly vertically deep to clear the back. Man coverage, at the snap from a tight bunch, simply cannot quickly identify and track individual assignments and gets collectively overwhelmed.)",
-        "标签": ["盯人淹没", "错位跟丢(Poor Man Coverage)"]
+        "标签": ["对方盯人被集结淹没", "人盯人防守", "集结阵型", "迷惑防守", "错位攻击"]
     },
     {
         "name": "集结阵型战术2 (Bunch Play 2)",
         "desc": "三人紧密集结在右侧，C开球后保护口袋并注意突击者，QB两步快速后撤将球传向浅区，集结中的外接两人同时跑Corner路线从密集人群中冲出直插边线纵深中深区域，迫使整条防守线集体后退保护深区，此时RB从集结后方悄然释放到右侧空旷的坪区接快速短传，防守被深路线整齐地后退保护但因后退过度导致浅区彻底成为覆盖真空。\n(Three receivers tightly bunched on the right. C blocks the pocket and watches for blitzers. QB takes a quick 2-step drop and throws to the shallow area. Two of the bunched receivers simultaneously run Corner routes, bursting out of the tight group and attacking the boundary intermediate-deep area. This forces the entire defensive line to retreat and protect deep. Meanwhile, RB quietly releases from behind the bunch to the wide-open right flat for a quick short pass. The defense, retreating in unison to protect deep, over-commits and leaves the shallow area a complete coverage vacuum.)",
-        "标签": ["浅区真空", "后退过深(Poor Shallow Coverage)"]
+        "标签": ["对方防深后退过度", "浅区真空", "集结阵型", "短传推进", "安全高成功率"]
     },
     {
         "name": "集结阵型战术3 (Bunch Play 3)",
         "desc": "三人紧密集结在右侧，C开球后立即向左侧短区释放不给防守反应时间，QB两步后撤快速出球，集结中的近端球员沿启球线快速横向跑动向弱侧跑Slant，利用右侧两名外接跑Corner和Post深路线将防守主力全部拖在右侧深区和中路，防守将绝大部分注意力和人员集中在球侧的堆挤区导致完全忽略了弱侧的近端横穿路线，C在端区附近接球时面前空旷无人。\n(Three receivers tightly bunched on the right. C immediately releases to the left short area after the snap, giving the defense no time to react. QB takes a 2-step drop and throws quickly. The near-side player in the bunch runs a fast horizontal route along the line of scrimmage toward the weak side on a Slant. The two outside receivers on the right run Corner and Post deep routes, dragging all defensive attention to the right deep and middle areas. The defense focuses almost all attention and personnel on the bunched side, completely ignoring the weak-side crosser. C catches the ball near the end zone with open field ahead.)",
-        "标签": ["弱侧盲区", "中卫漏防(Poor Middle Coverage)"]
+        "标签": ["对方弱侧盲区", "中卫漏防", "集结阵型", "弱侧偷袭", "快速出球"]
     },
     {
         "name": "I字阵型战术1 (I Formation Play 1)",
         "desc": "经典I字阵型，C开球后向前推挡观察线卫动向后释放到右侧短区，QB五步后撤后面临多重选择阅读防守弱点，后置RB先做阻挡假动作然后走Flat路线向右坪区释放作为最短选项，前置左侧外接跑Post路线切入中央深处攻击安全卫，右侧外接跑Corner路线攻击边线纵深，Slot跑Hitch在8码处回身提供中距离，防守面对如此多的接球点无法在瞬时正确判断进攻重点导致阅读犹豫慢半拍。\n(Classic I-formation. C blocks forward, reads the linebacker movement, then releases to the right short area. QB takes a 5-step drop and faces multiple options, reading the defensive weakness. The deep RB first fakes a block, then releases on a Flat route to the right flat as the shortest option. The front left outside WR runs a Post deep into the middle to attack the safety. Right outside WR runs a Corner to attack the boundary deep. Slot runs a Hitch, turning back at 8 yards to provide an intermediate option. The defense, facing so many receiving threats, cannot instantly diagnose the offensive priority and hesitates in its read.)",
-        "标签": ["阅读犹豫", "多层选择(Poor Defensive Reads and Multiple Threats)"]
+        "标签": ["对方阅读犹豫", "多层进攻选择", "I字阵型", "全面覆盖", "中距离推进"]
     },
     {
         "name": "I字阵型战术3 (I Formation Play 3)",
         "desc": "I字阵型，C开球后全力保护为深远路线争取时间，QB七步深撤等待所有路线深入防线，左侧WR跑Fly路线全力冲刺40码以上将安全卫彻底钉死在纵深，右侧WR跑Post路线从外侧向中央深处切入，槽位Slot跑Post路线从另一侧向中央汇合形成双柱态势，RB从I字后场走Wheel路线沿边线冲刷纵深，防守的落位尚未完全稳固就被多条纵深路线同时冲击各层保护来不及建立就被打穿。\n(I-formation. C gives full protection to buy time for deep routes. QB takes a 7-step deep drop and waits for all routes to penetrate the defense. Left WR runs a Fly at full speed, sprinting 40+ yards to completely nail the safety deep. Right WR runs a Post from the outside into the deep middle. Slot runs a Post from the other side toward the middle, creating a dual-post formation. RB from the I-backfield runs a Wheel route along the sideline deep. The defense, before even getting fully set, is hit by multiple deep routes simultaneously—every layer of protection is pierced before it can be established.)",
-        "标签": ["快节奏冲击", "落位不稳(Poor Defensive Setup)"]
+        "标签": ["对方落位不稳", "快节奏冲击", "I字阵型", "深远打击", "大码数推进"]
     },
     {
         "name": "双后场阵型战术2 (Double Back Play 2)",
         "desc": "双后场阵型（两名跑卫站后排），C开球后推挡一步后立即释放到左侧浅区，QB五步后撤同时拥有五个接球选项，左侧WR跑Fly路线直冲纵深将整条左侧防线钉在后场，右侧WR跑Post路线切入中央深区牵制安全卫，槽位跑Corner路线攻击右侧边线纵深，双后场之一的RB1走Flat到右侧坪区做短传选项，RB2走浅横穿从左侧短区横穿到右侧，防守因体能和轮转速度有限根本无法同时覆盖从深区到浅区的五个接应点。\n(Double-back formation: two running backs in the backfield. C blocks for one count then immediately releases to the left shallow area. QB takes a 5-step drop and has five receiving options. Left WR runs a Fly straight deep, pinning the entire left defense deep. Right WR runs a Post into the middle deep to occupy the safety. Slot runs a Corner to attack the right boundary deep. RB1 of the double backs runs a Flat to the right flat as a short option. RB2 runs a shallow cross from the left short area to the right. The defense, limited in stamina and rotation speed, simply cannot cover five receiving threats from deep to shallow simultaneously.)",
-        "标签": ["多点覆盖弱", "体能轮转差(Poor Stamina and Rotation)"]
+        "标签": ["对方体能轮转差", "多点覆盖", "双后场阵型", "全面攻击", "大码数推进"]
     },
     {
         "name": "端侧反跑 (End Around)",
         "desc": "C开球后向右推挡迷惑防守以为进攻方向在右侧，QB接球后右手做出向右侧RB交球的完整假动作诱导整条防线向右侧移动，实际上QB将球藏在身后交给从左侧横移过来的外侧WR，WR接球后向已经完全撤空的左侧边线全速冲刺，左侧的攻击侧因防守被假交球吸引而全员偏右，左侧的防守者已全部不在防守位置上。\n(C blocks right after the snap to deceive the defense into thinking the play goes right. QB receives the snap and executes a full play-fake with his right hand toward the RB on the right, baiting the entire defense to flow right. Actually, QB hides the ball behind his back and hands it to the outside WR who has crossed from the left. WR receives the ball and sprints at full speed toward the now completely empty left sideline. The left side, abandoned because the defense was pulled by the play-fake, has no defenders left in position.)",
-        "标签": ["追球惯性", "假动作被骗(Poor Fake Play Execution)"]
+        "标签": ["对方追球惯性", "假动作被骗", "欺骗战术", "反侧冲刺", "出其不意"]
     },
     {
         "name": "反向交叉跑动 (Crossbuck)",
         "desc": "C开球后居中保护，QB接球后RB从右侧向左跑动做出接球姿态，与此同时槽位Slot从左侧向右侧跑动同样做出接球假象，两人在QB身前相交通过形成视觉混淆，防守被双人交叉的假动作诱骗集体涌向一侧，QB实际将球交给最初向右跑动的Slot让其沿右侧边线反向冲刺，或将球交给RB沿左侧突破，防守全部被假交球引至错误的一侧。\n(C blocks in the middle. After the snap, RB runs from right to left making a receiving gesture. Simultaneously, Slot runs from left to right also faking a receiving motion. The two cross in front of QB, creating visual confusion. The defense is baited by the dual crossing fake and flows en masse to one side. QB actually hands the ball to Slot (who initially ran right) to sprint along the right sideline in the opposite direction, or hands to RB to break along the left. The defense is entirely pulled to the wrong side by the fake handoff.)",
-        "标签": ["假交球易骗", "防守过激(Poor Defensive Aggression)"]
+        "标签": ["对方假交球易骗", "防守过激", "欺骗战术", "反侧冲刺", "跑球推进"]
     },
     {
         "name": "双重反跑 (Double Reverse)",
         "desc": "C开球后推挡保护并注意防线反应，QB首先将球手递手交给从左向右跑动的RB做第一次反向，RB持球继续向右跑做出要突破的样子吸引防守全线朝右追击，在跑动中RB再次将球手递手交给从右侧绕行回来的Slot做第二次反方向转移，Slot接球后沿空旷的左侧边线冲刺，外围WR在此期间悄然向纵深穿插走Fly路线将仅存的安全卫拖入深区，防守被连续两次假动作完全耗尽反应时间后后场已空无一人的开阔地。\n(C blocks to protect and watches the defense's reaction. QB first hands the ball to RB who runs from left to right for the first reverse. RB carries the ball right, faking a breakaway run, attracting the entire defense to pursue right. While running, RB hands the ball to Slot who has looped back from the right for a second reverse transfer. Slot receives the ball and sprints up the empty left sideline. The outside WR, during this time, quietly releases deep on a Fly route, dragging the only remaining safety deep. The defense, exhausted by two consecutive fakes with no reaction time left, leaves the backfield a wide-open empty field.)",
-        "标签": ["连续假动作", "后场真空(Poor Defensive Reaction and Exhaustion)"]
+        "标签": ["对方连续假动作易骗", "后场防守真空", "欺骗战术", "反侧大码数", "出其不意"]
     },
     {
         "name": "假双重反跑 (Fake Double Reverse)",
         "desc": "C开球后保护口袋，QB首先将球交向RB做出第一次反跑的样子，RB向右跑动与从右向左跑动的Slot做手递手假动作，两人在场上完整执行双重反跑的肢体动作，防守因害怕被反跑直接突破而集体提前前压收缩防线准备防跑，此时QB实际并未松开球权而是将球牢牢握在手中，待防守全线压上后迅速传给在混乱中已悄然跑向深远Fly或Corner路线的外侧WR过顶得分。\n(C blocks the pocket. QB first fakes a handoff to RB who appears to take the first reverse. RB runs right and executes a fake handoff with Slot who runs right-to-left. The two perform the complete physical motions of a double reverse. The defense, afraid of being beaten by the reverse run, collectively steps forward and tightens to defend the run. QB, however, never actually released the ball—he holds it firmly. Once the defense fully commits forward, QB quickly throws deep to the outside WR who has quietly run a Fly or Corner route and scores over the top of the compressed defense.)",
-        "标签": ["防跑前压", "深远过顶(Poor Deep Coverage)"]
+        "标签": ["对方防跑前压过度", "深远过顶", "假跑真传", "过顶打击", "达阵威胁"]
     },
     {
         "name": "假三重反跑 (Fake Triple Reverse)",
         "desc": "C开球后推挡保护，QB接球后场上连续出现三次假交球动作——QB→RB→Slot→左外接WR，每个接球球员都做出完整的接球、跑动、再交球姿势，三人的假动作将防守的注意力一层层地吸引到右侧，防守完全被多重假动作耗尽而且应对反跑的模式单一过度投入，真正的持球者是始终未松手的QB，待防线完全偏向右侧后QB转身将球传给空无一人的左侧边路的第五名球员。\n(C blocks to protect. After QB receives the snap, three consecutive fake handoffs occur on the field—QB→RB→Slot→Left WR. Each receiving player performs the complete catch, run, and re-handoff motion. The three fakes layer by layer pull defensive attention to the right side. The defense is completely exhausted by multiple fakes and over-commits to stopping the reverse pattern. The true ball carrier is QB, who has never released the ball. Once the defense fully leans right, QB turns and throws to the completely unguarded left sideline where the fifth receiver waits.)",
-        "标签": ["多重假动作", "反向无防(Poor Offense Against Reverse Patterns)"]
+        "标签": ["对方多重假动作易骗", "反侧无防", "欺骗战术", "反侧大码数", "出其不意"]
     },
     {
         "name": "单侧列阵战术1 (Single Set Play 1)",
         "desc": "四名接球手全部列阵在球场同一侧，只有一名WR单独站在空旷的反侧，C开球后迅速向空旷的反侧释放，QB两步后撤快速判断防守对单侧重兵的应对，强侧的四名接球手按坪区、中等路线、深区路线三个层次同时展开撕开防线，弱侧仅剩的单独WR趁机跑一条Post路线切入被清空的中路纵深，防守将绝大部分人员集中在列阵侧导致弱侧几乎弃守一旦球瞬间转移至反向就是多打少的局面。\n(Four receivers all line up on the same side of the field, with only one WR isolated on the wide-open opposite side. C quickly releases to the empty opposite side after the snap. QB takes a 2-step drop and quickly reads how the defense handles the overload. The four receivers on the strong side simultaneously expand across three levels—flat, intermediate, deep—tearing the defense apart. The lone WR on the weak side takes the opportunity to run a Post into the emptied middle deep. The defense concentrates almost all personnel on the overloaded side, essentially abandoning the weak side. If the ball is instantly transferred to the opposite side, it becomes an outnumbered situation favoring the offense.)",
-        "标签": ["弱侧空虚", "重兵偏侧(Poor Weak Side Coverage)"]
+        "标签": ["对方弱侧空虚", "重兵偏侧", "单侧列阵", "弱侧偷袭", "多打少"]
     },
     {
         "name": "单侧列阵战术3 (Single Set Play 3)",
         "desc": "全队集中在一侧列阵后，C开球后保护口袋并延迟向弱侧释放，QB五步后撤让强侧的WR跑一组复杂的深交叉路线——从强侧出发横穿整个后场向弱侧深远区域冲刺，由于防守的协防侧移需要从强侧全速横向跑动到弱侧而其横向移动速度和选位判断都不足以在接球手到达之前完成补位，弱侧最后只剩下一个孤立无助的单防者面对有充足准备的外接手。\n(The entire offense aligns on one side. C blocks the pocket and releases late to the weak side. QB takes a 5-step drop and lets the strong-side WR run a complex deep crossing route—starting from the strong side, crossing the entire backfield, and sprinting toward the weak-side deep area. The defense's help rotation requires sprinting laterally at full speed from the strong side to the weak side. Their lateral speed and positioning judgment are insufficient to complete the coverage before the receiver arrives. The weak side is left with only one isolated defender facing a well-prepared receiver.)",
-        "标签": ["横移协防慢", "单防劣势(Poor Lateral Coverage and Man Coverage Disadvantage)"]
+        "标签": ["对方横移协防慢", "弱侧单防劣势", "单侧列阵", "深交叉路线", "大码数推进"]
     },
     {
         "name": "完全分散进攻 (Spread Offense)",
         "desc": "五人最大宽度分散站位将防守网彻底拉开到全场，C开球后居中保护提供口袋，QB三步后撤快速扫描全场找出防守最薄弱的一对一点名攻击，四个接球手各自跑不同的垂直或角位路线——左侧Fly、槽位Corner、另一槽位Post、右侧Dig，每个人的路线独立攻击一个防守者使其被彻底孤立没有队友可以帮忙协防，防守阵中只要有任何一个个体球员速度或技术存在短板就会被在此战术中被无限放大并精准点名。\n(Five players line up at maximum width, spreading the defense across the entire field. C blocks in the middle to provide a pocket. QB takes a 3-step drop and quickly scans the field to identify the weakest one-on-one matchup, then targets that defender. Four receivers each run different vertical or angle routes—left Fly, slot Corner, other slot Post, right Dig. Each route independently attacks a single defender, isolating him completely with no teammate available to help. If any individual defender on the defense has a speed or technique weakness, this concept will magnify it and precisely target it.)",
-        "标签": ["单兵能力弱", "被孤立点名(Poor Individual Coverage and Isolation)"]
+        "标签": ["对方单兵能力弱", "被孤立点名", "分散阵型", "寻找单挑", "精准打击"]
     },
     {
         "name": "斜穿-坪区路线组合 (Slant-Flat Route Combo)",
         "desc": "C开球后保护中路并注意线卫突击，QB两步后撤快速阅读浅区防守者的动向，槽位Slot从右侧释放跑一条Slant路线以45度角切入中央短区域吸引同侧线卫的注意迫使他做出选择，RB同时从后场向同一侧的坪区释放横向跑动向边线方向，线卫在盯防Slot斜插和追防RB坪区之间只能选择其一，如果线卫选择追踪斜插则QB将球快速传到坪区让RB接球后面对空旷边线推进。\n(C blocks the middle and watches for linebacker blitz. QB takes a 2-step drop and quickly reads the shallow defender's movement. Slot releases from the right on a Slant route, cutting at a 45-degree angle into the short middle, drawing the attention of the same-side linebacker and forcing him to choose. RB simultaneously releases from the backfield to the same-side flat, running laterally toward the sideline. The linebacker can only choose one—cover the Slot's Slant or chase RB's Flat. If the linebacker chases the Slant, QB quickly passes to the flat for RB to catch and run up an empty sideline.)",
-        "标签": ["浅区抉择弱", "顾此失彼(Poor Defensive Reads and Coverage)"]
+        "标签": ["对方浅区防守抉择弱", "线卫顾此失彼", "快速出球", "边路短传", "安全高成功率"]
     },
     {
         "name": "柱路-坪区组合 (Post-Flat Combo)",
         "desc": "C开球后向右推挡建立保护并注意外侧冲击，QB五步后撤观察安全卫的反应，右侧WR加速跑Post路线切向中央深处将安全卫被迫后退到深区进行保护，在安全卫被牵制在深度后RB立即从后场释放到同一侧的坪区跑Flat接短传，安全卫因为过度尽责地退到深区导致原本应协防的短坪区域无人补位，RB接球后面前有巨大的跑动推进空间可直接过半场。\n(C blocks right to establish protection and watches for outside pressure. QB takes a 5-step drop and observes the safety's reaction. Right WR accelerates on a Post route, cutting into the deep middle, forcing the safety to retreat deep to protect. Once the safety is occupied deep, RB immediately releases from the backfield to the same-side flat for a short Flat pass. The safety, being overly responsible and retreating deep, leaves the short flat area—which he should have helped cover—completely unguarded. RB catches the ball with massive open-field running room and can gain yards past midfield.)",
-        "标签": ["安全卫后退过深", "坪区漏防(Poor Flat Coverage)"]
+        "标签": ["对方安全卫后退过深", "坪区漏防", "中距离推进", "跑卫接球", "安全高成功率"]
     },
     {
         "name": "回身-底角组合 (Hitch-Corner Combo)",
         "desc": "C开球后保护口袋为这样的半场攻击争取时间，QB五步后撤阅读同侧两名防守者的反应，右侧外侧WR跑Hitch路线冲刺8码后急停回身做出要接短传的姿态迫使对位角卫不得不向前上提准备防守回身球，内侧槽位在角卫上提暴露身后空间的同一瞬间跑Corner路线从内侧绕过角卫全速冲向边线底角的纵深方向，角卫在没有高处安全卫协防的情况下对上提防Hitch和后退防Corner只能二选一。\n(C blocks the pocket to buy time for this half-field attack. QB takes a 5-step drop and reads the reaction of the two defenders on the same side. The right outside WR runs a Hitch—sprinting 8 yards, stopping abruptly, and turning back as if to catch a short pass—forcing the corner to step forward to defend the hitch. The inside slot, at the exact moment the corner steps forward and exposes the space behind him, runs a Corner route from inside, bypassing the corner at full speed toward the deep boundary corner. The corner, without high safety help, must choose between stepping up for the Hitch or dropping back for the Corner—he cannot do both.)",
-        "标签": ["角卫孤立", "二选一漏洞(Poor Corner Coverage and One-on-One Dilemma)"]
+        "标签": ["对方角卫被孤立", "二选一困境", "半场攻击", "边路深远打击", "单挑优势"]
     },
     {
         "name": "高抛-外侧组合 (Fade-Out Combo)",
         "desc": "C开球后全力保护并为深远球提供充裕时间，QB五步后撤将球分配到防守最薄弱的一层，左侧外侧WR直接跑Fade路线冲向边线底角端区高高跃起接高弧传球逼迫对位角卫必须转身全速冲刺跟防，在角卫被拖入深层争顶时槽位突然跑一条Out路线切向边线短区获得完全无人干扰的接球空间，单个防守者无论在速度还是覆盖面积上都无力同时处理这两个垂直层次完全不同的接球威胁。\n(C fully protects and provides ample time for the deep throw. QB takes a 5-step drop and distributes the ball to the defense's weakest layer. Left outside WR runs a Fade directly toward the boundary corner of the end zone, elevating to catch a high-arc pass, forcing the corner to turn and sprint at full speed to defend. While the corner is dragged deep for the jump ball, the slot suddenly runs an Out route toward the boundary short area, getting completely uncontested receiving space. A single defender, regardless of speed or coverage range, cannot simultaneously defend these two threats at completely different vertical levels.)",
-        "标签": ["纵向拉伸防弱", "浅区空位(Poor Vertical Stretch and Shallow Vacancies)"]
+        "标签": ["对方纵向拉伸防守弱", "浅区防守空位", "红区进攻", "分层攻击", "达阵威胁"]
     },
     {
         "name": "粉碎概念 (Smash Concept)",
         "desc": "C开球后推挡保护，QB五步后撤阅读边角区域的防守结构，同侧外接两人中靠外的WR跑Corner路线全速冲向边线底角纵深处强力争夺边角区域，内侧的槽接WR跑Hitch路线在8码处急停回身提供快速短传选项，防守方的外角卫和内对位者在面对一个深边角加一个短回身的组合时无法形成有效呼应，不论防守如何选择都必然在其中一个点形成一对一进攻方的优势接球。\n(C blocks to protect. QB takes a 5-step drop and reads the defensive structure in the boundary-corner area. Of the two receivers on the same side, the outside WR runs a Corner route at full speed toward the deep boundary corner, aggressively attacking that space. The inside slot runs a Hitch route, stopping at 8 yards and turning back to provide a quick short option. The defense's outside corner and inside defender, when facing the combination of a deep corner route and a short hitch, cannot effectively coordinate. No matter how the defense chooses, one of the two points will inevitably become a favorable one-on-one matchup for the offense.)",
-        "标签": ["边角防呼应差", "结构劣势(Poor Boundary Coverage and Structural Disadvantage)"]
+        "标签": ["对方边角防守呼应差", "结构劣势", "边路攻击", "高-低组合", "单挑优势"]
     },
     {
         "name": "网格交叉概念 (Mesh Concept)",
         "desc": "C开球后保护中路，QB三步后撤观察浅区交叉的进展，左侧Slot和右侧Slot两人从场地的相对方向同时以中等速度向启球线附近的浅区跑Drag路线，两人的路线在场地中央3-4码处交错通过形成一道流动的网格屏障，左侧WR跑Fly清空左侧纵深，右侧WR跑Corner清空右侧纵深，跑Draw的两人在穿过彼此时利用队友身体作为掩护阻挡追防的盯人防守者，防守者因被挂住碰撞而失位后接球手有充足空间接球转身推进。\n(C blocks the middle. QB takes a 3-step drop and watches the shallow crossing develop. Left Slot and Right Slot, from opposite sides of the field, simultaneously run Drag routes at moderate speed across the shallow area near the line of scrimmage. Their routes cross at 3-4 yards in the middle of the field, forming a moving mesh barrier. Left WR runs a Fly to clear the left deep. Right WR runs a Corner to clear the right deep. The two Drag runners, as they cross, use each other's body as a natural screen to obstruct pursuing man defenders. Defenders get rubbed off and knocked out of position. The receiver has ample space to catch, turn, and run after catch.)",
-        "标签": ["盯人掩护挂", "交叉失位(Poor Man Coverage and loose position while crossing)"]
+        "标签": ["对方盯人被掩护挂住", "人盯人防守", "浅区交叉", "短传后推进", "安全高成功率"]
     },
     {
         "name": "四条垂直路线 (Four Verticals)",
         "desc": "C开球后全力保护口袋为所有路线争取深球时间并观察是否有防守者漏进后场，QB七步深撤扫描全场安全卫的移动选择，四个接球手（左右外侧WR加两个槽位Slot）同时全速垂直冲刺各自直线冲向对方最深区域，四个深路线同时冲击迫使防守全线拼命后退保护深区，RB在四人都冲向纵深时悄然从后场释放到中路浅坪区，防守在同一次攻防中仅凭场上人数根本无法安全包夹四条深路线外加守一个浅坪跑卫。\n(C gives full pocket protection to buy time for all routes and watches for any defender leaking into the backfield. QB takes a 7-step deep drop and scans the safety's movement across the field. Four receivers—both outside WRs and both Slots—simultaneously sprint vertically at full speed, each running straight toward the deepest part of the field. Four deep routes hit at once, forcing the entire defense to desperately retreat to protect deep. RB, while all four are going deep, quietly releases from the backfield into the middle shallow flat. The defense, with only the players on the field, simply cannot safely bracket four deep routes AND cover a shallow flat running back on the same play.)",
-        "标签": ["纵深兵力不足(Poor Deep Coverage)"]
+        "标签": ["对方纵深兵力不足", "防守人数劣势", "深远打击", "全面攻击", "大码数推进"]
     },
-     {
+    {
         "name": "Snag 概念 (Snag Concept)",
         "desc": "C开球后居中保护口袋，QB三步后撤先阅读强侧。强侧最外侧WR跑Corner路线直插边线纵深12码处，吸引角卫和安全卫的注意力制造高位威胁；同侧槽位Slot跑Snag路线，先垂直冲击4码后急停回身以45度斜插向外侧寻找空档；RB从后场直接释放到强侧的坪区路线提供低位快传选项。三条路线形成一个三角形路线组合，迫使浅区防守者在高低位和水平位同时面临三打二的兵力劣势。\n(C protects the pocket after snap. QB takes a 3-step drop and reads the strong side first. The outside WR to the strong side runs a Corner route attacking the sideline at 12 yards to draw corner and safety attention; the Slot receiver on the same side executes a Snag route, driving vertically for 4 yards before stopping and slanting outward at a 45-degree angle to find open space; the RB releases directly into the flat on the strong side as a low, quick outlet. The three routes form a triangle concept, forcing the shallow defender into a high-low bind and a horizontal stretch against a 3-on-2 disadvantage.)",
-        "标签": ["区域交接模糊 (Zone handoff confusion); 浅区兵力劣势 (Shallow numerical disadvantage)"]
+        "标签": ["对方区域交接模糊", "浅区兵力劣势", "三角形路线", "边路攻击", "三打二优势"]
     },
     {
         "name": "Stick 概念 (Stick Concept)",
         "desc": "C开球后保护口袋并注意突击，QB三步后撤后视线锁定强侧的Stick路线组合。强侧最外侧WR跑垂直Fly路线全速冲击底线迫使角卫转身跟深；同侧槽位Slot跑5码折回身路线急停回身；而RB则在启球线后以Stick路线直冲5码后迅速外摆到外侧坪区。这种高低-外的组合拳，面对区域防守或人盯人都能迫使对手在回身与坪区之间做出艰难选择。\n(C protects the pocket after snap. QB takes a 3-step drop targeting the Stick combination. The outside WR on the strong side runs a vertical Fly to pin the corner deep; the strong-side Slot runs a 5-yard Hitch, stopping and turning back to the QB; the RB releases from behind the line on a Stick route, driving 5 yards then breaking out to the flat. This high-low-out combo forces defenders to commit between the hitch and the flat, regardless of coverage.)",
-        "标签": ["浅区抉择弱 (Poor shallow decision); 三点漏一 (Three points, one left open); 阅读犹豫 (Hesitant read)"]
+        "标签": ["对方浅区抉择弱", "三点漏一", "高-低-外组合", "短传推进", "安全高成功率"]
     },
     {
         "name": "Flood 概念/水淹 (Sail Concept)",
-        "desc": "C开球后全力向右推挡保护，QB五步后撤并启动假跑动作吸引线卫前压。右侧外侧WR跑垂直冲刺牵制底线防守；槽位Slot在12-14码处以“速度式直角外切”全速跑向边线创造中距离大空档；RB立刻短距离外摆至右侧坪区。瞬间在单侧形成深、中、短三层垂直维度的一波流“水淹”，直接制造三对二的区域过载。\n(C protects the pocket with a strong slide right. QB takes a 5-step drop with a play-action fake. The right-side WR runs a vertical streak to occupy the deep defender; the Slot runs a 12-14 yard 'speed out' to the sideline at full speed; the RB flares into the right flat. In an instant, a flood of receivers overwhelms that side, creating a deep-mid-short layered stretch and a direct 3-on-2 zone overload.)",
-        "标签": ["区域衔接差 (Poor zone connectivity); 弱侧补防慢 (Slow weak-side recovery); 窄边防守人数劣势 (Short-side numbers disadvantage)"]
+        "desc": "C开球后全力向右推挡保护，QB五步后撤并启动假跑动作吸引线卫前压。右侧外侧WR跑垂直冲刺牵制底线防守；槽位Slot在12-14码处以速度式直角外切全速跑向边线创造中距离大空档；RB立刻短距离外摆至右侧坪区。瞬间在单侧形成深、中、短三层垂直维度的一波流水淹，直接制造三对二的区域过载。\n(C protects the pocket with a strong slide right. QB takes a 5-step drop with a play-action fake. The right-side WR runs a vertical streak to occupy the deep defender; the Slot runs a 12-14 yard 'speed out' to the sideline at full speed; the RB flares into the right flat. In an instant, a flood of receivers overwhelms that side, creating a deep-mid-short layered stretch and a direct 3-on-2 zone overload.)",
+        "标签": ["对方区域衔接差", "弱侧补防慢", "单侧水淹", "三对二过载", "大码数推进"]
     },
     {
         "name": "Mills 概念 (Mills Concept)",
         "desc": "C开球后严密保护口袋，QB在假跑交球后执行七步深撤。右侧外接手先向内急加速跑10码然后90度角切入场地中央形成Dig路线，吸引全场唯一的安全卫上提封堵；在安全卫移动的瞬间，左侧同方向的槽外接立刻趁着中路真空以弧线高速绕后跑Post路线直接攻击全场最深的防守腹地。\n(C holds the pocket after a hard play-fake. The Outside WR on the strong side runs a Deep Dig route, driving hard 10-12 yards then cutting 90° inside to occupy the single-high safety; the moment the safety steps up, a Slot receiver or opposite-side WR bursts from the backside running a post route over the top, exploiting the vacated middle deep zone.)",
-        "标签": ["安全卫外扩 (Safety over-expanded); 中路纵深空 (Open middle deep); 安全卫阅读激进 (Aggressive safety read)"]
+        "标签": ["对方安全卫阅读激进", "中路纵深空虚", "假跑真传", "过顶打击", "单安全卫体系"]
     },
     {
         "name": "Scissors 概念 (Scissors Concept)",
-        "desc": "C开球后居中保护并观察防守纵深，QB五步后撤。左侧并列站位（Twins），内侧外接跑 Corner 路线直接切向外侧底角，强迫同侧防守角卫迅速向外侧移动；而外侧外接则在防守人向外扩张的瞬间，以一个 Post 路线从外向内切向场地中央。两人路线形成一把张开的“剪刀”，利用防守者对外部底角的防守反应来暴露中路衔接区的巨大漏洞。\n(C protects the center pocket. From a Twins alignment, the inside WR sprints vertically then breaks sharply to the deep corner; the Outside WR, on the release of the corner route, cuts inside on a deep Post. The routes create a 'Scissors' action that forces the cornerback to widen while the safety gets caught between the two deep cuts, opening up the middle seam.)",
-        "标签": ["安全卫协防弱 (Weak safety help); 预判被骗 (Susceptible to misdirection)"]
+        "desc": "C开球后居中保护并观察防守纵深，QB五步后撤。左侧并列站位（Twins），内侧外接跑 Corner 路线直接切向外侧底角，强迫同侧防守角卫迅速向外侧移动；而外侧外接则在防守人向外扩张的瞬间，以一个 Post 路线从外向内切向场地中央。两人路线形成一把张开的剪刀，利用防守者对外部底角的防守反应来暴露中路衔接区的巨大漏洞。\n(C protects the center pocket. From a Twins alignment, the inside WR sprints vertically then breaks sharply to the deep corner; the Outside WR, on the release of the corner route, cuts inside on a deep Post. The routes create a 'Scissors' action that forces the cornerback to widen while the safety gets caught between the two deep cuts, opening up the middle seam.)",
+        "标签": ["对方安全卫协防弱", "预判被骗", "剪刀路线", "中路深远打击", "双子阵型"]
     },
     {
         "name": "Drive 概念 (Drive Concept)",
-        "desc": "C开球后保护口袋并提防内侧，QB五步后撤。弱侧外侧大外接全速冲刺 Fly 路线清空后方；近端锋或槽外接在5码内横穿 Drag 路线吸引线卫紧跟；紧接着，位于同侧后方的另一外接手则猛然加速跑一个较深的 Dig 路线（10-15码）直插因横穿路线造成的防守分层瞬间空出的中腹空地。\n(C protects the pocket. The backside WR clears by running a vertical Fly. The nearby Slot or TE runs a shallow Drag route (0-5 yards) to occupy the linebacker’s eyes. The remaining receiver on that side then accelerates into the void behind the drag, running a deeper Dig route (10-15 yards) into the intermediate middle zone.)",
-        "标签": ["横移补位慢 (Slow lateral fill); 中场真空 (Vacant midfield area)"]
+        "desc": "C开球后保护口袋并提防内侧，QB五步后撤。弱侧外侧大外接全速冲刺 Fly 路线清空后方；近端锋或槽外接在5码内横穿 Drag 路线吸引线卫紧跟；紧接着，位于同侧后方的另一外接手则猛然加速跑一个较深的 Dig 路线（10-15码）直插因横穿路线造成的防守分层瞬间空出的中腹空地。\n(C protects the pocket. The backside WR clears by running a vertical Fly. The nearby Slot or TE runs a shallow Drag route (0-5 yards) to occupy the linebacker's eyes. The remaining receiver on that side then accelerates into the void behind the drag, running a deeper Dig route (10-15 yards) into the intermediate middle zone.)",
+        "标签": ["对方横移补位慢", "中场防守真空", "分层攻击", "中路中距离", "安全高成功率"]
     },
     {
         "name": "Dragon 概念 (Slant-Flat Combo 加强版)",
         "desc": "C开球后快速推挡并准备释放，QB执行三步快速后撤。左侧WR全力垂直冲刺拉空半场；右侧槽外接执行立刻执行横跨启球线的长距离 Drag 吸引视野；同时右侧RB迅速释放至右外侧坪区。所有接球点全部清洗走防守人后，中锋C从中路悄然释放接球，面前空无一人。\n(C blocks and then releases into the vacated middle. The left WR runs a vertical to clear out the zone; the Slot to the right runs a shallow Drag crossing the field to occupy box defenders; the RB immediately releases to the right flat. As all defenders are dragged away, the Center slips untouched into the wide-open center field for an easy catch.)",
-        "标签": ["忽略中锋 (Center ignored as receiver); 中路纵向空 (Open vertical middle lane)"]
+        "标签": ["对方忽略中锋接球", "中路纵向防守空", "中锋接球", "出其不意", "安全高成功率"]
     },
     {
         "name": "费城特供 (Philly Special)",
         "desc": "C将球开给QB后立刻假装漏人向右侧阻挡，QB接球后立刻将球向后抛给左侧反向冲刺而来的RB，QB自己则向右侧悄然溜边。RB持球后抬头佯冲一步内线迫使防守者收窄，随即将球横向传给早已埋伏在右侧且无人看管的QB，QB原地接球后直接送出跨越全场的长传达阵。\n(C snaps to the QB and immediately acts as if blocking right. The QB quickly pitches the ball backward to a RB sweeping left, then the QB drifts right along the sideline unnoticed. The RB takes one step upfield to freeze the defense, then throws a lateral back to the wide-open QB who delivers a deep cross-field touchdown pass.)",
-        "标签": ["多重假动作 (Breakdown against multiple fakes); 追球惯性 (Ball-watching overcommit)"]
+        "标签": ["对方追球惯性", "多重假动作易骗", "欺骗战术", "四分卫接球", "达阵威胁"]
     },
     {
         "name": "特殊选项 (RPO - Run Pass Option)",
         "desc": "C开球后负责推挡左半侧防守截锋，QB和RB在做假交球时密切观察左侧线卫：如果线卫为了防跑而前压封堵内侧缝隙，QB立刻收回球权并越过线卫头顶快速传给左侧外接手的短距离 Slant 路线；如果线卫后退进入防传区域，QB则真实将球交给RB执行冲球推进。\n(C protects the left gap. The QB reads the left Inside Linebacker during the mesh with the RB. If the linebacker steps up for run support, the QB pulls the ball and throws a quick Slant to the left WR. If the linebacker drops back into coverage, the QB leaves the ball with the RB for a quick inside run.)",
-        "标签": ["阅读犹豫 (Hesitant read); 防守过激 (Over-aggressive pursuit)"]
+        "标签": ["对方线卫阅读犹豫", "防守过激", "阅读选项", "跑传结合", "灵活应变"]
     },
     {
         "name": "快速气泡屏风 (Quick Bubble Screen)",
         "desc": "C开球后快速向右移动实施对外侧角卫的阻挡，QB接球后不做调整立刻平传至外侧槽外接，外侧大外接开球后也立即转身向内阻挡安全卫或清场。三人瞬间完成接球、清道、推进，将攻击点设立在场地的绝对边路。\n(C snaps the ball and moves quickly to block the outside corner. The QB immediately throws a horizontal pass to the Slot. The outside WR immediately turns inside to block the advancing safety. This creates a immediate convoy along the sideline to attack the field's edge with speed.)",
-        "标签": ["边路纵深空 (Open sideline deep); 边角防呼应差 (Poor sideline coordination)"]
+        "标签": ["对方边路纵深空", "边角防守呼应差", "屏风短传", "边路快速推进", "安全高成功率"]
     },
     {
         "name": "短抛屏风 (Tunnel Screen)",
-        "desc": "C和RB开球后立刻放弃中路防守人转而在启球线后横向移动组成开路小组；外侧大外接则先向前佯装冲刺两步后，迅速回身“钻进”开路小组组成的移动城墙后面接QB的平传球。其他接球手全部垂直冲深清空后方，为屏风接球手创造广阔的持球推进路线。\n(The offensive line lets the rushers through, then the C and RB slide immediately to the sideline to form a moving wall. The Slot receiver fakes a vertical release for two steps then 'tunnels' back inside towards the QB’s throw. The outside receivers run deep clears, opening a massive rushing lane for the screen receiver behind his blockers.)",
-        "标签": ["防守前压 (Heavy Blitz / Overcommit); 浅区跑动空间 (Shallow running lanes open)"]
+        "desc": "C和RB开球后立刻放弃中路防守人转而在启球线后横向移动组成开路小组；外侧大外接则先向前佯装冲刺两步后，迅速回身钻进开路小组组成的移动城墙后面接QB的平传球。其他接球手全部垂直冲深清空后方，为屏风接球手创造广阔的持球推进路线。\n(The offensive line lets the rushers through, then the C and RB slide immediately to the sideline to form a moving wall. The Slot receiver fakes a vertical release for two steps then 'tunnels' back inside towards the QB's throw. The outside receivers run deep clears, opening a massive rushing lane for the screen receiver behind his blockers.)",
+        "标签": ["对方防守前压过度", "浅区跑动空间大", "屏风短传", "短传后大码数推进", "安全高成功率"]
     },
     {
         "name": "Dagger 概念 (Dagger Concept)",
-        "desc": "C开球后滞留并加强口袋深度，QB在假动作后执行七步深撤。弱侧近端锋或外接手全速启动沿中路的接缝跑 Seam 路线垂直冲击后场，吸引高位安全卫的协防；同侧大外接则全力冲刺到底后在场地中央17-20码深处执行极长的Dig路线横穿全场。利用Seam路线的纵向威胁将安全卫“定住”，专门打击单高卫防阵的横向覆盖死角。\n(C stays in to protect for depth. The backside receiver runs a vertical Seam route to lock the high safety in place; the primary outside WR runs a deep crossing route (Inside Dig, 17-20 yards deep) behind the linebacker level but in front of the stationary safety. This specifically attacks the horizontal weakness of single-high safety defenses.)",
-        "标签": ["纵深兵力不足 (Insufficient deep coverage); 中场防跑动能力弱 (Weak middle field run defense)"]
+        "desc": "C开球后滞留并加强口袋深度，QB在假动作后执行七步深撤。弱侧近端锋或外接手全速启动沿中路的接缝跑 Seam 路线垂直冲击后场，吸引高位安全卫的协防；同侧大外接则全力冲刺到底后在场地中央17-20码深处执行极长的Dig路线横穿全场。利用Seam路线的纵向威胁将安全卫定住，专门打击单高卫防阵的横向覆盖死角。\n(C stays in to protect for depth. The backside receiver runs a vertical Seam route to lock the high safety in place; the primary outside WR runs a deep crossing route (Inside Dig, 17-20 yards deep) behind the linebacker level but in front of the stationary safety. This specifically attacks the horizontal weakness of single-high safety defenses.)",
+        "标签": ["对方纵深兵力不足", "中场防跑动能力弱", "单安全卫体系", "深横穿路线", "大码数推进"]
     },
     {
         "name": "Hoss 概念 (Hitch-Seam Combo 加强版)",
         "desc": "C开球后退守中路，QB根据开球前判断选择阅读侧。强侧外侧外接跑垂直 Seam 路线利用速度拉开与边线之间的距离；内侧槽外接果断在8码处折回做回身路线。四分卫首先阅读安全卫的动态：如果安全卫向前补位防止回身，就直接传 Seam 路线；如果安全卫后退保护纵深，则快速传给回身路线获取稳健码数。\n(C stays home for pass protection. The outside WR runs a vertical Seam reading the safety; the inside Slot runs a hard 8-yard Hitch. The QB reads the deep safety: if the safety jumps the hitch, the QB rips the ball to the Seam; if the safety bails deep, the QB checks it down to the hitch immediately.)",
-        "标签": ["安全卫协防弱 (Weak safety help); 角卫孤立 (Cornerback isolated)"]
+        "标签": ["对方安全卫协防弱", "角卫被孤立", "阅读安全卫", "高-低组合", "灵活应变"]
     },
     {
         "name": "Divide 概念 (Divide Concept)",
-        "desc": "C开球后居中保护，QB执行三步快速阅读。左侧两个并列站位外接手互相交叉，内侧近端锋跑 Corner 杀向外侧底角，外侧外接跑 Post 切向中路立柱；右侧单站的大外接跑垂直冲刺清空另半侧。核心在于双人路线在二线防守区交叉“分流”，瞬间把高位安全卫钉死在葫芦口无法同时覆盖两边。\n(C protects the middle. From a Twins alignment on the left, the inside receiver runs a Corner towards the pylon while the outside receiver breaks on a Post toward the middle; the right-side receiver clears with a Fly. The two routes 'divide' the deep coverage, creating a millisecond of indecision for the safety and cornerback, leaving one receiver wide open.)",
-        "标签": ["区域换人错 (Zone exchange errors); 纵深区域沟通失误 (Deep zone communication failure)"]
+        "desc": "C开球后居中保护，QB执行三步快速阅读。左侧两个并列站位外接手互相交叉，内侧近端锋跑 Corner 杀向外侧底角，外侧外接跑 Post 切向中路立柱；右侧单站的大外接跑垂直冲刺清空另半侧。核心在于双人路线在二线防守区交叉分流，瞬间把高位安全卫钉死在葫芦口无法同时覆盖两边。\n(C protects the middle. From a Twins alignment on the left, the inside receiver runs a Corner towards the pylon while the outside receiver breaks on a Post toward the middle; the right-side receiver clears with a Fly. The two routes 'divide' the deep coverage, creating a millisecond of indecision for the safety and cornerback, leaving one receiver wide open.)",
+        "标签": ["对方区域换人出错", "纵深沟通失误", "分流路线", "中路深远打击", "双子阵型"]
     },
     {
         "name": "Slot Fade 特殊 (66 Concept)",
         "desc": "C开球后向右推挡保护口袋右侧，QB将球高吊抛出。右侧大外接全力冲刺跑 Post 路线吸引角卫向中路内收移动；就在角卫转身向内跟防的瞬间，内部槽外接以最快速度从槽位冲出并侧身沿边线跑 Fade 路线，接QB的高弧线吊球攻击边线与角卫无法转身覆盖的盲区。\n(C slide protects to the right. The outside WR runs a hard inside Post to occupy the cornerback; the Slot receiver immediately bursts to the outside running a Fade down the numbers. With the corner turned inward, the QB drops a high-arching ball into the sideline void before the safety can rotate over.)",
-        "标签": ["争顶劣势 (Poor 50/50 ball ability); 角卫转身不便 (Cornerback poor turn ability)"]
+        "标签": ["对方角卫转身不便", "争顶劣势", "槽位Fade", "边路深远打击", "单挑优势"]
     },
     {
         "name": "Yankee 概念 (Yankee Concept)",
         "desc": "C开球后执行极度逼真的假跑开路动作，全体接球手先假装阻挡，诱使线卫和全体防守前压；待防守全线收缩至启球线附近预备防跑时，左侧大外接突然从内线绕出跑 Post 路线攻击后场，右侧速度极快的槽外接则在深远后方跑 Dig 路线横穿半场。利用极致的假跑虚晃创造出深远单挑的安全卫噩梦。\n(The entire offense sells a hard run fake with the C firing out to block. While the defense bites up to stop the run, the left WR takes an inside release on a deep Post and the right Slot runs a deep crossing route over the flat-footed safeties. This is a devastating play-action shot designed to punish aggressive run defense.)",
-        "标签": ["防跑前压 (Run defense creep); 假动作判断失误 (Fooled by play action)"]
+        "标签": ["对方防跑前压过度", "假动作易被骗", "假跑真传", "深远打击", "大码数推进"]
     },
     {
         "name": "Smash-Whip 变种 (Smash-Whip Variant)",
-        "desc": "C开球后推挡保护，QB五步后撤阅读边角区域。外侧大外接执行10码的 Corner 路线冲击底角；槽外接没有跑常规的快速回身，而是执行“Whip”路线：先假装向内侧斜插，当防守者重心向内移动试图切断回身球时，突然甩向边线。利用鞭打效应制造瞬间脱离。\n(The Outside WR attacks the deep corner pylon to widen the defense. The Slot receiver does not sit in a soft spot; instead he runs a Whip route: hard fake inside as if to sit, then whips back outside towards the flat. This whipping action creates instant separation from the defender expecting a hitch.)",
-        "标签": ["连续变向弱 (Weak consecutive cuts); 惯性冻结 (Momentum freeze)"]
+        "desc": "C开球后推挡保护，QB五步后撤阅读边角区域。外侧大外接执行10码的 Corner 路线冲击底角；槽外接没有跑常规的快速回身，而是执行Whip路线：先假装向内侧斜插，当防守者重心向内移动试图切断回身球时，突然甩向边线。利用鞭打效应制造瞬间脱离。\n(The Outside WR attacks the deep corner pylon to widen the defense. The Slot receiver does not sit in a soft spot; instead he runs a Whip route: hard fake inside as if to sit, then whips back outside towards the flat. This whipping action creates instant separation from the defender expecting a hitch.)",
+        "标签": ["对方连续变向防守弱", "惯性冻结", "鞭打变向", "边路进攻", "快速出球"]
     },
     {
         "name": "Y-Juke 概念 (Hoss Y-Juke)",
-        "desc": "C开球后强力保护内侧；两个外侧大外接分别从两侧全速跑垂直 Seam 路线将线卫和“安全卫”死钉在中场；中路的灵活接球手（Y）开球后跑 Juke 路线：先向内侧横向晃动牵制，随后立即向外侧平移寻找中路的天然草坪空地进行接球。这种支开锋线防守人的技巧，专门攻击 Cover 2 中间深洞。\n(The outside WRs run vertical seams to clear out the middle. The designated 'Y' receiver runs a Juke route: an initial shake inside to freeze the middle linebacker, then a sudden lateral break outside to find 'green grass' in the middle. A targeted attack on the deep middle void of Cover 2/Tampa 2.)",
-        "标签": ["安全卫后退过深 (Safety dropping too deep); 球场中央区域空洞 (Vacant middle of the field)"]
+        "desc": "C开球后强力保护内侧；两个外侧大外接分别从两侧全速跑垂直 Seam 路线将线卫和安全卫死钉在中场；中路的灵活接球手（Y）开球后跑 Juke 路线：先向内侧横向晃动牵制，随后立即向外侧平移寻找中路的天然草坪空地进行接球。这种支开锋线防守人的技巧，专门攻击 Cover 2 中间深洞。\n(The outside WRs run vertical seams to clear out the middle. The designated 'Y' receiver runs a Juke route: an initial shake inside to freeze the middle linebacker, then a sudden lateral break outside to find 'green grass' in the middle. A targeted attack on the deep middle void of Cover 2/Tampa 2.)",
+        "标签": ["对方安全卫后退过深", "球场中央区域空洞", "Cover 2攻击", "中路中距离", "晃动摆脱"]
     }
-    
+
 
 ]
 
@@ -1099,7 +1099,7 @@ if st.button(L["button"], type="primary"):
     
     # 先尝试本地语义检索
         # ===== 第一阶段 =====
-    local_result = local_semantic_search(free_text, top_k=6)
+    local_result = None
     if local_result is not None:
         local_indices, is_low_quality = local_result
     else:
